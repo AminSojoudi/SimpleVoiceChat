@@ -1,5 +1,6 @@
 
-[![Android CI](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-multi-platform.yml)
+[![Windows CI](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-windows-platform.yml/badge.svg?branch=main)](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-windows-platform.yml)
+[![Ubuntu CI](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-ubuntu-platform.yml/badge.svg?branch=main)](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-ubuntu-platform.yml)
 # SimpeVoiceChat
 Simple C++ UDP based Voice Chat Application using Valve [Game Network Sockets](https://github.com/ValveSoftware/GameNetworkingSockets) and [PortAudio](https://github.com/PortAudio/portaudio)
 
