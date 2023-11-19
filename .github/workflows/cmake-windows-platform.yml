@@ -37,8 +37,8 @@ jobs:
       run: |
         git clone https://github.com/Microsoft/vcpkg.git
         cd vcpkg
-        .\vcpkg\bootstrap-vcpkg.bat
-        vcpkg integrate install
+        .\bootstrap-vcpkg.bat
+        .\vcpkg integrate install
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
