@@ -1,0 +1,132 @@
+{
+  "$schema": "https://raw.githubusercontent.com/spdx/spdx-spec/v2.2.1/schemas/spdx-schema.json",
+  "spdxVersion": "SPDX-2.2",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "documentNamespace": "https://spdx.org/spdxdocs/gamenetworkingsockets-arm64-osx-1.4.1#1-34898c31-7120-4f68-a6d4-33e03aba98ea",
+  "name": "gamenetworkingsockets:arm64-osx@1.4.1#1 a5cbfbdad69a4bd8bfd893073bad02f162b5574f464baaacc83d36cc2b638711",
+  "creationInfo": {
+    "creators": [
+      "Tool: vcpkg-ac02a9f660977426b8ec6392919fbb1d51b10998"
+    ],
+    "created": "2023-10-29T13:58:10Z"
+  },
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "GENERATES",
+      "relatedSpdxElement": "SPDXRef-binary"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-0"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-1"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-2"
+    },
+    {
+      "spdxElementId": "SPDXRef-binary",
+      "relationshipType": "GENERATED_FROM",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-0",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-1",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-2",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    }
+  ],
+  "packages": [
+    {
+      "name": "gamenetworkingsockets",
+      "SPDXID": "SPDXRef-port",
+      "versionInfo": "1.4.1#1",
+      "downloadLocation": "NOASSERTION",
+      "homepage": "https://github.com/ValveSoftware/GameNetworkingSockets",
+      "licenseConcluded": "BSD-3-Clause",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "description": "GameNetworkingSockets is a basic transport layer for games.",
+      "comment": "This is the port (recipe) consumed by vcpkg."
+    },
+    {
+      "name": "gamenetworkingsockets:arm64-osx",
+      "SPDXID": "SPDXRef-binary",
+      "versionInfo": "a5cbfbdad69a4bd8bfd893073bad02f162b5574f464baaacc83d36cc2b638711",
+      "downloadLocation": "NONE",
+      "licenseConcluded": "BSD-3-Clause",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "comment": "This is a binary package built by vcpkg."
+    },
+    {
+      "SPDXID": "SPDXRef-resource-1",
+      "name": "ValveSoftware/GameNetworkingSockets",
+      "downloadLocation": "git+https://github.com/ValveSoftware/GameNetworkingSockets@505c697d0abef5da2ff3be35aa4ea3687597c3e9",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "checksums": [
+        {
+          "algorithm": "SHA512",
+          "checksumValue": "3e4b4da138f2b356169e6504aa899c9eca4fba5b5fcaed2a0ae8a2f5828976dd00af9f3262c75bd6d820300da87ebe32da152fecddc278a651f3b33eb59142df"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "fileName": ".//Users/amin/vcpkg/ports/gamenetworkingsockets/fix-depend-protobuf.patch",
+      "SPDXID": "SPDXRef-file-0",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "17943d267c30bc5f7eb544d33307deb90bbfb32b430911359d91d0d2fa0df40b"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "fileName": ".//Users/amin/vcpkg/ports/gamenetworkingsockets/portfile.cmake",
+      "SPDXID": "SPDXRef-file-1",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "0f849f2634401f41e65e5a2b33d63ea8e3c6aac556dcabbb061cc3ee9a749e69"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "fileName": ".//Users/amin/vcpkg/ports/gamenetworkingsockets/vcpkg.json",
+      "SPDXID": "SPDXRef-file-2",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "df7ccd62b1407dd1fedf266249a3d31022260f444573769540b9343529d7826c"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    }
+  ]
+}

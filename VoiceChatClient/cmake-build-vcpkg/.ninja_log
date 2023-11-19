@@ -1,0 +1,11 @@
+# ninja log v5
+9	381	1700411450616943328	CMakeFiles/VoiceChatClient.dir/main.cpp.o	fe4973acda5153fb
+1	3262	1700427721238258620	build.ninja	70c31e6e5a2eb009
+9	307	1700416714069301330	CMakeFiles/VoiceChatClient.dir/AudioTools.cpp.o	e638b590405821b1
+308	382	1700416714144465857	VoiceChatClient	eff3778dca9578e7
+8	315	1700411499429085791	CMakeFiles/VoiceChatClient.dir/SocketClient.cpp.o	3507b8b148d547f7
+0	6	0	clean	ae570a7976bb6fe5
+9	303	1700427755215951424	CMakeFiles/VoiceChatClient.dir/AudioTools.cpp.o	a019e53e8350ddf4
+9	308	1700427755222482079	CMakeFiles/VoiceChatClient.dir/SocketClient.cpp.o	827aafcf3d7c4acb
+9	359	1700427755272965518	CMakeFiles/VoiceChatClient.dir/main.cpp.o	254ebbfb64c43506
+359	515	1700427755429974319	VoiceChatClient	3e57176cf66437d4

@@ -1,0 +1,39 @@
+waiting to take filesystem lock on /Users/amin/vcpkg/.vcpkg-root...
+Detecting compiler hash for triplet arm64-osx...
+The following packages will be built and installed:
+    gamenetworkingsockets:arm64-osx -> 1.4.1#1
+  * openssl:arm64-osx -> 3.1.4
+    portaudio:arm64-osx -> 19.7#5
+  * protobuf:arm64-osx -> 3.21.12
+  * vcpkg-cmake:arm64-osx -> 2023-05-04
+  * vcpkg-cmake-config:arm64-osx -> 2022-02-06#1
+  * vcpkg-cmake-get-vars:arm64-osx -> 2023-03-02
+Additional packages (*) will be modified to complete this operation.
+Restored 7 package(s) from /Users/amin/.cache/vcpkg/archives in 1.6 s. Use --debug to see more details.
+Installing 1/7 vcpkg-cmake-config:arm64-osx...
+Elapsed time to handle vcpkg-cmake-config:arm64-osx: 2.18 ms
+Installing 2/7 vcpkg-cmake:arm64-osx...
+Elapsed time to handle vcpkg-cmake:arm64-osx: 2.9 ms
+Installing 3/7 protobuf:arm64-osx...
+Elapsed time to handle protobuf:arm64-osx: 46.4 ms
+Installing 4/7 vcpkg-cmake-get-vars:arm64-osx...
+Elapsed time to handle vcpkg-cmake-get-vars:arm64-osx: 6.47 ms
+Installing 5/7 openssl:arm64-osx...
+Elapsed time to handle openssl:arm64-osx: 49 ms
+Installing 6/7 gamenetworkingsockets:arm64-osx...
+Elapsed time to handle gamenetworkingsockets:arm64-osx: 7.19 ms
+Installing 7/7 portaudio:arm64-osx...
+Elapsed time to handle portaudio:arm64-osx: 5.2 ms
+Total install time: 119 ms
+gamenetworkingsockets provides CMake targets:
+
+  # this is heuristically generated, and may not be correct
+  find_package(GameNetworkingSockets CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE GameNetworkingSockets::shared GameNetworkingSockets::static GameNetworkingSockets::GameNetworkingSockets GameNetworkingSockets::GameNetworkingSockets_s)
+
+portaudio provides CMake targets:
+
+  # this is heuristically generated, and may not be correct
+  find_package(portaudio CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE portaudio_static)
+

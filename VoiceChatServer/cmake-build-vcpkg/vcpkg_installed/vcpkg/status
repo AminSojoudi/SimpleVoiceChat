@@ -1,0 +1,51 @@
+Package: vcpkg-cmake-config
+Version: 2022-02-06
+Port-Version: 1
+Architecture: arm64-osx
+Multi-Arch: same
+Abi: 1dde16772176a915cf9c010429600c83ab4c693aa3111b8e4429b6e26faea2c4
+Status: install ok installed
+
+Package: vcpkg-cmake
+Version: 2023-05-04
+Architecture: arm64-osx
+Multi-Arch: same
+Abi: 3367018cc623893cb2b702a9104d273790dbbada70191ae93238b48acf1ccfc4
+Status: install ok installed
+
+Package: protobuf
+Version: 3.21.12
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: arm64-osx
+Multi-Arch: same
+Abi: b9b7687ce02922c1289ef5427b08a40cd2ea6022a2cb7a431a92358ea9e82540
+Description: Protocol Buffers - Google's data interchange format
+Status: install ok installed
+
+Package: vcpkg-cmake-get-vars
+Version: 2023-03-02
+Depends: vcpkg-cmake
+Architecture: arm64-osx
+Multi-Arch: same
+Abi: 377b64244c1b6daff5c97afe24fd34015963962c297efcbb0036ceab6659c8e0
+Status: install ok installed
+
+Package: openssl
+Version: 3.1.4
+Depends: vcpkg-cmake, vcpkg-cmake-config, vcpkg-cmake-get-vars
+Architecture: arm64-osx
+Multi-Arch: same
+Abi: ebd659bd54bedc0c9e7a74fa8c660d2e57095a0109da8a7e6cac434fd4724664
+Description: OpenSSL is an open source project that provides a robust, commercial-grade, and full-featured toolkit for the Transport Layer Security (TLS) and Secure Sockets Layer (SSL) protocols. It is also a general-purpose cryptography library.
+Status: install ok installed
+
+Package: gamenetworkingsockets
+Version: 1.4.1
+Port-Version: 1
+Depends: openssl, protobuf, vcpkg-cmake, vcpkg-cmake-config
+Architecture: arm64-osx
+Multi-Arch: same
+Abi: a5cbfbdad69a4bd8bfd893073bad02f162b5574f464baaacc83d36cc2b638711
+Description: GameNetworkingSockets is a basic transport layer for games.
+Status: install ok installed
+

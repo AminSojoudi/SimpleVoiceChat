@@ -1,0 +1,9 @@
+# ninja log v5
+9	364	1700411445713461686	CMakeFiles/ValveGameServerTest.dir/main.cpp.o	c67a091663805e36
+301	372	1700416915336595559	ValveGameServerTest	a0e5a343dae7aacb
+8	300	1700416915262740198	CMakeFiles/ValveGameServerTest.dir/Server.cpp.o	81b40fcb37ad27ca
+2	35	1697534438135094680	CMakeFiles/ValveGameServerTest.dir/main2.cpp.o	1c0755336e5407c8
+7	35	1700427751816590947	CMakeFiles/ValveGameServerTest.dir/main2.cpp.o	ed242a020695361e
+6	312	1700427752092568870	CMakeFiles/ValveGameServerTest.dir/main.cpp.o	f1292b32eec9b372
+6	312	1700427752093368541	CMakeFiles/ValveGameServerTest.dir/Server.cpp.o	a438d0925305b47
+316	445	1700427752227294359	ValveGameServerTest	e60762b02bbf5120
