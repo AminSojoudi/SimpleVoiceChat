@@ -13,6 +13,7 @@
 #include "queue"
 #include "portaudio.h"
 #include <queue>
+#include <cassert>
 
 typedef short AUDIO_SAMPLE;
 #define BufferSize 1024
