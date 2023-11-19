@@ -12,6 +12,10 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
 
+    defaults:
+      run:
+        working-directory: VoiceChatClient
+
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
@@ -53,6 +57,13 @@ jobs:
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/VoiceChatClient/build" >> "$GITHUB_OUTPUT"
+
+    - name: Install Vcpkg
+      run: |
+        git clone https://github.com/Microsoft/vcpkg.git
+        cd vcpkg
+        ./bootstrap-vcpkg.sh
+        ./vcpkg integrate install
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
