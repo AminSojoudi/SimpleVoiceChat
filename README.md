@@ -2,9 +2,6 @@
 Simple C++ UDP based Voice Chat Application using Valve [Game Network Sockets](https://github.com/ValveSoftware/GameNetworkingSockets) and [PortAudio](https://github.com/PortAudio/portaudio)
 
 # TODO
-- [ ] Clean Projects Names
-- [ ] Add Projects to git
-- [ ] Upload to Github
 - [ ] Add log Level and port as arguments to server and add log level and server address and port to client as arguemtns 
 - [ ] Make Client Multiplatform
 - [ ] Improve Client/Server connection handling with proper logs
