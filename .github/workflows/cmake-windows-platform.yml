@@ -46,6 +46,7 @@ jobs:
       run: cmake -B ${{github.workspace}}/build 
             -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
             -DCMAKE_TOOLCHAIN_FILE=${{ steps.strings.outputs.client-dir }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+            -DPORTAUDIO_LINK=portaudio
 
     - name: Build
       # Build your program with the given configuration
