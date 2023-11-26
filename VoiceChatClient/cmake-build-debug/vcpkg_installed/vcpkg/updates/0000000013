@@ -1,9 +1,0 @@
-Package: portaudio
-Version: 19.7
-Port-Version: 5
-Depends: vcpkg-cmake, vcpkg-cmake-config
-Architecture: arm64-osx
-Multi-Arch: same
-Abi: b5c6b326de4824125311565f92275f4d4ecbda12c843d5d1b2f3d7d952e776cc
-Description: PortAudio Portable Cross-platform Audio I/O API PortAudio is a free, cross-platform, open-source, audio I/O library.  It lets you write simple audio programs in 'C' or C++ that will compile and run on many platforms including Windows, Macintosh OS X, and Unix (OSS/ALSA). It is intended to promote the exchange of audio software between developers on different platforms. Many applications use PortAudio for Audio I/O.
-Status: install ok installed
