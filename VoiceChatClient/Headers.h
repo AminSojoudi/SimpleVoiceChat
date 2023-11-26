@@ -9,7 +9,6 @@
 #include <steam/isteamnetworkingutils.h>
 #include <stdio.h>
 #include <thread>
-#include <arpa/inet.h>
 #include "queue"
 #include "portaudio.h"
 #include <queue>
