@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.26)
+# Windows -DPORTAUDIO_LINK=portaudio
+# Linux/Mac -DPORTAUDIO_LINK=portaudio_static
+cmake_minimum_required(VERSION 3.20)
 project(VoiceChatClient)
 
 find_package( GameNetworkingSockets CONFIG REQUIRED)
@@ -14,4 +16,4 @@ add_executable(VoiceChatClient main.cpp
         AudioTools.h
         Headers.h)
 
-target_link_libraries(VoiceChatClient GameNetworkingSockets::shared portaudio_static)
+target_link_libraries(VoiceChatClient GameNetworkingSockets::shared ${PORTAUDIO_LINK})

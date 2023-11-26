@@ -164,14 +164,13 @@ void SocketClient::PollIncomingMessages(AUDIO_SAMPLE* _voiceOutputBuffer)
         }
 
         // Playback
-        long delay = 1000000 / 44100;
+        long delay = 1000000 / 22500;
         const size_t buffer_size = audioData->inputCurrentCounter;
         for (size_t i = 0; i < buffer_size; ++i) {
             if (audioData->Input[i] != 0)
                 _voiceOutputBuffer[i] = audioData->Input[i];
             printf("%d," , audioData->Input[i]);
-            if (i % 2 == 0)
-                std::this_thread::sleep_for( std::chrono::microseconds ( delay ) );
+            std::this_thread::sleep_for( std::chrono::microseconds ( delay ) );
         }
         printf("\n");
 

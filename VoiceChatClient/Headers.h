@@ -22,6 +22,8 @@
 
 #if PLATFORM == PLATFORM_WINDOWS
 #include <Winsock2.h>
+#include <Ws2tcpip.h>
+#include <string>
 #else
 #include <arpa/inet.h>
 #endif
