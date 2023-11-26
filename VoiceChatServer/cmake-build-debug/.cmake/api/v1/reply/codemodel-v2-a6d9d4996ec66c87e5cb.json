@@ -6,7 +6,7 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-f5ebdc15457944623624.json",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.26"
@@ -19,7 +19,7 @@
 					]
 				}
 			],
-			"name" : "",
+			"name" : "Debug",
 			"projects" : 
 			[
 				{
@@ -27,7 +27,7 @@
 					[
 						0
 					],
-					"name" : "ValveGameServerTest",
+					"name" : "VoiceChatServer",
 					"targetIndexes" : 
 					[
 						0
@@ -38,9 +38,9 @@
 			[
 				{
 					"directoryIndex" : 0,
-					"id" : "ValveGameServerTest::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-ValveGameServerTest-9657cb58bf92997867a9.json",
-					"name" : "ValveGameServerTest",
+					"id" : "VoiceChatServer::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-VoiceChatServer-Debug-463454a59f7dbdab1fbc.json",
+					"name" : "VoiceChatServer",
 					"projectIndex" : 0
 				}
 			]
@@ -49,7 +49,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg",
+		"build" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug",
 		"source" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer"
 	},
 	"version" : 

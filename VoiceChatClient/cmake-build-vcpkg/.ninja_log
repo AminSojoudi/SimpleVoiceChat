@@ -9,3 +9,7 @@
 9	308	1700427755222482079	CMakeFiles/VoiceChatClient.dir/SocketClient.cpp.o	827aafcf3d7c4acb
 9	359	1700427755272965518	CMakeFiles/VoiceChatClient.dir/main.cpp.o	254ebbfb64c43506
 359	515	1700427755429974319	VoiceChatClient	3e57176cf66437d4
+9	2835	1700999092347684564	CMakeFiles/VoiceChatClient.dir/AudioTools.cpp.o	a019e53e8350ddf4
+8	2839	1700999092352183959	CMakeFiles/VoiceChatClient.dir/SocketClient.cpp.o	827aafcf3d7c4acb
+8	2897	1700999092410472471	CMakeFiles/VoiceChatClient.dir/main.cpp.o	254ebbfb64c43506
+2897	3256	1700999092770093871	VoiceChatClient	3e57176cf66437d4

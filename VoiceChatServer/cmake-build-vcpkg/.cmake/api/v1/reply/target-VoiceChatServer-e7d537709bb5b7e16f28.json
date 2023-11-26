@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "ValveGameServerTest"
+			"path" : "VoiceChatServer"
 		}
 	],
 	"backtrace" : 2,
@@ -130,7 +130,7 @@
 			]
 		}
 	],
-	"id" : "ValveGameServerTest::@6890427a1f51a3e7e1df",
+	"id" : "VoiceChatServer::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -161,8 +161,8 @@
 		],
 		"language" : "CXX"
 	},
-	"name" : "ValveGameServerTest",
-	"nameOnDisk" : "ValveGameServerTest",
+	"name" : "VoiceChatServer",
+	"nameOnDisk" : "VoiceChatServer",
 	"paths" : 
 	{
 		"build" : ".",

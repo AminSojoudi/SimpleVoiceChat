@@ -1,6 +1,7 @@
+waiting to take filesystem lock on /Users/amin/vcpkg/.vcpkg-root...
 Detecting compiler hash for triplet arm64-osx...
 All requested packages are currently installed.
-Total install time: 292 ns
+Total install time: 333 ns
 gamenetworkingsockets provides CMake targets:
 
   # this is heuristically generated, and may not be correct

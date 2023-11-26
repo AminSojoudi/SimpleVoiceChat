@@ -43,7 +43,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "Debug"
+			"value" : ""
 		},
 		{
 			"name" : "CMAKE_CACHEFILE_DIR",
@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -479,7 +479,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -831,7 +831,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "ValveGameServerTest"
+			"value" : "VoiceChatServer"
 		},
 		{
 			"name" : "CMAKE_RANLIB",
@@ -1095,10 +1095,10 @@
 				},
 				{
 					"name" : "HELPSTRING",
-					"value" : "The CMake toolchain file"
+					"value" : "No help, variable specified on the command line."
 				}
 			],
-			"type" : "FILEPATH",
+			"type" : "UNINITIALIZED",
 			"value" : "/Users/amin/vcpkg/scripts/buildsystems/vcpkg.cmake"
 		},
 		{
@@ -1139,7 +1139,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "[/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/libcrypto.a][/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/include][c ][v3.1.4()]"
+			"value" : "[/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/libcrypto.a][/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/include][c ][v3.1.4()]"
 		},
 		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_Protobuf",
@@ -1151,7 +1151,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "[optimized;/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/lib/libprotobuf.a;debug;/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/libprotobufd.a][/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/include][v3.21.12()]"
+			"value" : "[/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/lib/libprotobuf.a][/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/include][v3.21.12()]"
 		},
 		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_Threads",
@@ -1175,7 +1175,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/share/gamenetworkingsockets"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/share/gamenetworkingsockets"
 		},
 		{
 			"name" : "OPENSSL_CRYPTO_LIBRARY",
@@ -1191,7 +1191,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/libcrypto.a"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/libcrypto.a"
 		},
 		{
 			"name" : "OPENSSL_INCLUDE_DIR",
@@ -1207,7 +1207,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/include"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/include"
 		},
 		{
 			"name" : "OPENSSL_SSL_LIBRARY",
@@ -1223,7 +1223,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/libssl.a"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/libssl.a"
 		},
 		{
 			"name" : "PKG_CONFIG_ARGN",
@@ -1271,7 +1271,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/include"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/include"
 		},
 		{
 			"name" : "Protobuf_LIBRARY_DEBUG",
@@ -1287,7 +1287,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/libprotobufd.a"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/libprotobufd.a"
 		},
 		{
 			"name" : "Protobuf_LIBRARY_RELEASE",
@@ -1303,7 +1303,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/lib/libprotobuf.a"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/lib/libprotobuf.a"
 		},
 		{
 			"name" : "Protobuf_LITE_LIBRARY_DEBUG",
@@ -1319,7 +1319,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/libprotobuf-lited.a"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/libprotobuf-lited.a"
 		},
 		{
 			"name" : "Protobuf_LITE_LIBRARY_RELEASE",
@@ -1335,7 +1335,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/lib/libprotobuf-lite.a"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/lib/libprotobuf-lite.a"
 		},
 		{
 			"name" : "Protobuf_PROTOC_EXECUTABLE",
@@ -1351,7 +1351,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/tools/protobuf/protoc"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/tools/protobuf/protoc"
 		},
 		{
 			"name" : "Protobuf_PROTOC_LIBRARY_DEBUG",
@@ -1367,7 +1367,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/libprotocd.a"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/libprotocd.a"
 		},
 		{
 			"name" : "Protobuf_PROTOC_LIBRARY_RELEASE",
@@ -1383,7 +1383,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/lib/libprotoc.a"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/lib/libprotoc.a"
 		},
 		{
 			"name" : "VCPKG_APPLOCAL_DEPS",
@@ -1419,7 +1419,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed"
 		},
 		{
 			"name" : "VCPKG_INSTALL_OPTIONS",
@@ -1567,7 +1567,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg"
 		},
 		{
 			"name" : "ValveGameServerTest_IS_TOP_LEVEL",
@@ -1583,6 +1583,42 @@
 		},
 		{
 			"name" : "ValveGameServerTest_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer"
+		},
+		{
+			"name" : "VoiceChatServer_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg"
+		},
+		{
+			"name" : "VoiceChatServer_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
+		},
+		{
+			"name" : "VoiceChatServer_SOURCE_DIR",
 			"properties" : 
 			[
 				{
@@ -1663,7 +1699,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "-I/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../../include"
+			"value" : "-I/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../../include"
 		},
 		{
 			"name" : "_OPENSSL_CFLAGS_I",
@@ -1711,7 +1747,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../../include"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../../include"
 		},
 		{
 			"name" : "_OPENSSL_INCLUDE_DIRS",
@@ -1723,7 +1759,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../../include"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../../include"
 		},
 		{
 			"name" : "_OPENSSL_LDFLAGS",
@@ -1735,7 +1771,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "-L/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../lib;-lssl;-lcrypto"
+			"value" : "-L/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../lib;-lssl;-lcrypto"
 		},
 		{
 			"name" : "_OPENSSL_LDFLAGS_OTHER",
@@ -1759,7 +1795,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../lib"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../lib"
 		},
 		{
 			"name" : "_OPENSSL_LIBRARIES",
@@ -1783,7 +1819,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../lib"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../lib"
 		},
 		{
 			"name" : "_OPENSSL_LIBS",
@@ -1855,7 +1891,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../.."
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../.."
 		},
 		{
 			"name" : "_OPENSSL_STATIC_CFLAGS",
@@ -1867,7 +1903,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "-I/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../../include"
+			"value" : "-I/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../../include"
 		},
 		{
 			"name" : "_OPENSSL_STATIC_CFLAGS_I",
@@ -1903,7 +1939,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../../include"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../../include"
 		},
 		{
 			"name" : "_OPENSSL_STATIC_LDFLAGS",
@@ -1915,7 +1951,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "-L/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../lib;-lssl;-lcrypto"
+			"value" : "-L/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../lib;-lssl;-lcrypto"
 		},
 		{
 			"name" : "_OPENSSL_STATIC_LDFLAGS_OTHER",
@@ -1963,7 +1999,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../lib"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../lib"
 		},
 		{
 			"name" : "_OPENSSL_STATIC_LIBS",
@@ -2083,7 +2119,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed"
 		},
 		{
 			"name" : "__pkg_config_arguments__OPENSSL",
@@ -2123,7 +2159,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/libcrypto.a"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/libcrypto.a"
 		},
 		{
 			"name" : "pkgcfg_lib__OPENSSL_ssl",
@@ -2139,7 +2175,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/libssl.a"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/libssl.a"
 		},
 		{
 			"name" : "prefix_result",
@@ -2151,7 +2187,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-debug/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../lib"
+			"value" : "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/cmake-build-vcpkg/vcpkg_installed/arm64-osx/debug/lib/pkgconfig/../../lib"
 		}
 	],
 	"kind" : "cache",
