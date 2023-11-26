@@ -1,6 +1,0 @@
-# ninja log v5
-48	132	1697980029749598263	ValveGameServerTest	5977f268bcb4b9d8
-1	47	1697980029664506969	CMakeFiles/ValveGameServerTest.dir/Server.cpp.o	90e8fe00cb845d91
-2	63	1697979982985082821	CMakeFiles/ValveGameServerTest.dir/main.cpp.o	cc21e666420ce7e8
-1	3270	1700427746922924980	build.ninja	94697c3d5bce6564
-1	30	1697554445124006319	CMakeFiles/ValveGameServerTest.dir/main2.cpp.o	e4a4ce96670f16e2
