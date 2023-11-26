@@ -1,8 +1,0 @@
-Package: openssl
-Version: 3.1.4
-Depends: vcpkg-cmake, vcpkg-cmake-config, vcpkg-cmake-get-vars
-Architecture: arm64-osx
-Multi-Arch: same
-Abi: ebd659bd54bedc0c9e7a74fa8c660d2e57095a0109da8a7e6cac434fd4724664
-Description: OpenSSL is an open source project that provides a robust, commercial-grade, and full-featured toolkit for the Transport Layer Security (TLS) and Secure Sockets Layer (SSL) protocols. It is also a general-purpose cryptography library.
-Status: install ok half-installed

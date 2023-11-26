@@ -1,3 +1,0 @@
-/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatClient/cmake-build-debug/CMakeFiles/VoiceChatClient.dir
-/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatClient/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatClient/cmake-build-debug/CMakeFiles/rebuild_cache.dir

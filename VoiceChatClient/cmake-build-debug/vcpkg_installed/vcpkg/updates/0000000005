@@ -1,8 +1,0 @@
-Package: protobuf
-Version: 3.21.12
-Depends: vcpkg-cmake, vcpkg-cmake-config
-Architecture: arm64-osx
-Multi-Arch: same
-Abi: b9b7687ce02922c1289ef5427b08a40cd2ea6022a2cb7a431a92358ea9e82540
-Description: Protocol Buffers - Google's data interchange format
-Status: install ok installed
