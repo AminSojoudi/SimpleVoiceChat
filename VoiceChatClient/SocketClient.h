@@ -18,13 +18,14 @@ private:
     static HSteamNetConnection connection;
     static ISteamNetworkingSockets* steamNetworking;
     static SteamNetworkingMicroseconds g_logTimeZero;
+    static bool isConnected;
 
     static void InitSteamDatagramConnectionSockets();
     static void DebugOutput( ESteamNetworkingSocketsDebugOutputType eType, const char *pszMsg );
     static void OnSteamNetConnectionStatusChanged( SteamNetConnectionStatusChangedCallback_t *pInfo );
-public:
-    static SocketClient* Instance;
 
+public:
+    bool IsConnected();
     bool Connect(SteamNetworkingIPAddr add);
     void PollIncomingMessages(AUDIO_SAMPLE* _voiceOutputBuffer);
     void PollConnectionStateChanges();

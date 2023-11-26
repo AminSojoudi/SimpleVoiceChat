@@ -13,8 +13,13 @@ SocketClient* clientSocket;
 int counter = 0;
 
 void DoNetwork(const AudioData &_data, AUDIO_SAMPLE* _voiceOutputBuffer){
+
     clientSocket->PollIncomingMessages(_voiceOutputBuffer);
     clientSocket->PollConnectionStateChanges();
+
+    if (!clientSocket->IsConnected()){
+        return;
+    }
 
     printf("sending data with size %d : \n", _data.inputCurrentCounter);
     printf("send counter is %d \n", ++counter);
@@ -69,13 +74,10 @@ int AudioTools::patestCallback( const void *inputBuffer, void *outputBuffer,
 }
 
 
-bool AudioTools::StartRecording() {
+bool AudioTools::StartRecording(SteamNetworkingIPAddr serverAddress) {
 
     // create network socket
     clientSocket = new SocketClient();
-
-    SteamNetworkingIPAddr serverAddress{};
-    serverAddress.SetIPv4(2130706433, 27020);
 
     clientSocket->Connect(serverAddress);
 

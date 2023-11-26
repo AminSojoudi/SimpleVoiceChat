@@ -8,7 +8,6 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(VoiceChatServer main.cpp
         Server.cpp
         Server.h
-        main2.cpp
         MessageType.h)
 
 target_link_libraries(VoiceChatServer GameNetworkingSockets::shared)

@@ -3,7 +3,15 @@
 int main(int argc, const char *argv[] )
 {
     Server* server = new Server();
-    bool success = server->StartServer(27020);
+
+    uint16 port = 27020;
+    if (argc == 2){
+        port = std::stoi(argv[1]);
+    } else{
+        printf("port not provided, using default port 27020 \n usage: ./server [port]");
+    }
+
+    bool success = server->StartServer(port);
 
     while (success){
 

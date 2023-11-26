@@ -7,7 +7,7 @@
 SteamNetworkingMicroseconds SocketClient::g_logTimeZero;
 HSteamNetConnection SocketClient::connection;
 ISteamNetworkingSockets* SocketClient::steamNetworking;
-SocketClient* SocketClient::Instance = nullptr;
+bool SocketClient::isConnected = false;
 
 
 void SocketClient::InitSteamDatagramConnectionSockets() {
@@ -97,6 +97,7 @@ void SocketClient::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusCha
 
         case k_ESteamNetworkingConnectionState_Connected:
             printf( "Connected to server OK" );
+            isConnected = true;
             break;
 
         default:
@@ -117,7 +118,11 @@ bool SocketClient::Connect(SteamNetworkingIPAddr add) {
 
     connection = steamNetworking->ConnectByIPAddress(add, 1, &options );
 
-
+    if ( connection == k_HSteamNetConnection_Invalid )
+    {
+        printf( "Failed to create connection" );
+        return false;
+    }
 
     return true;
 }
@@ -184,7 +189,6 @@ SocketClient::SocketClient() {
     // Create client and server sockets
     InitSteamDatagramConnectionSockets();
     steamNetworking = SteamNetworkingSockets();
-    SocketClient::Instance = this;
 }
 
 SocketClient::~SocketClient() {
@@ -197,4 +201,8 @@ void SocketClient::Send(const void *data, uint32 size) {
     steamNetworking->SendMessageToConnection(connection, data,size,
                                              k_nSteamNetworkingSend_ReliableNoNagle,
                                              nullptr);
+}
+
+bool SocketClient::IsConnected() {
+    return isConnected;
 }

@@ -21,7 +21,7 @@ private:
                                void *userData );
 
 public:
-    bool StartRecording();
+    bool StartRecording(SteamNetworkingIPAddr serverAddress);
     bool StopRecording();
     ~AudioTools();
 };
