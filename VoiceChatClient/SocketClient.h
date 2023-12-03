@@ -5,7 +5,7 @@
 #ifndef VOICECHATCLIENT_SOCKETCLIENT_H
 #define VOICECHATCLIENT_SOCKETCLIENT_H
 
-#include "Headers.h"
+#include "Message.h"
 
 
 

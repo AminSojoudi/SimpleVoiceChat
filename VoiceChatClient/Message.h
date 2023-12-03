@@ -2,8 +2,8 @@
 // Created by Amin on 11/14/23.
 //
 
-#ifndef VOICECHATCLIENT_HEADERS_H
-#define VOICECHATCLIENT_HEADERS_H
+#ifndef VOICECHATCLIENT_MESSAGE_H
+#define VOICECHATCLIENT_MESSAGE_H
 
 
 
@@ -56,5 +56,5 @@ struct AudioData{
 };
 
 
-#endif //VOICECHATCLIENT_HEADERS_H
+#endif //VOICECHATCLIENT_MESSAGE_H
 
