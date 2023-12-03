@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+participant Main
+participant AudioTools
+participant SocketClient
+collections AudioThread
+collections NetworkThread
+
+
+Main -> AudioTools : Constructor
+activate AudioTools
+Main -> AudioTools : StartRecording
+AudioTools -> AudioThread : CreateThread
+activate AudioThread
+Main -> SocketClient: Constructor
+activate SocketClient
+Main -> SocketClient: StartConnection
+SocketClient -> NetworkThread : CreateThread
+activate NetworkThread
+loop SharedStruct Between Threads for reading and writing
+    AudioThread -> AudioThread : Capture Voice with buffer
+    NetworkThread -> NetworkThread : Send Voice Data
+    NetworkThread -> NetworkThread: Read Voice Data
+    AudioThread  -> AudioThread : PlayBack Voice
+end
+
+
+
+@enduml
