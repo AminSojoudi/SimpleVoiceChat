@@ -9,7 +9,6 @@ void signal_callback_handler(int signum) {
     shouldExit = true;
 }
 
-
 int main(int argc, const char *argv[] )
 {
     // Register signal and signal handler
