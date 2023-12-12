@@ -14,6 +14,6 @@ add_executable(VoiceChatClient main.cpp
         SocketClient.h
         AudioTools.cpp
         AudioTools.h
-        Headers.h)
+        Message.h)
 
 target_link_libraries(VoiceChatClient GameNetworkingSockets::shared ${PORTAUDIO_LINK})
