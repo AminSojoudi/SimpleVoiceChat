@@ -37,3 +37,6 @@ VoiceChatClient/cmake-build-vcpkg
 VoiceChatClient/out/
 VoiceChatClient/.vs/
 VoiceChatClient/CMakeSettings.json
+VoiceChatServer/.vs/
+VoiceChatServer/out/
+VoiceChatServer/CMakeSettings.json
