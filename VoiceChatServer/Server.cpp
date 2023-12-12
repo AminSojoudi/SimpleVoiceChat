@@ -32,10 +32,14 @@ bool Server::StartServer(uint16 port) {
     options.SetPtr( k_ESteamNetworkingConfig_Callback_ConnectionStatusChanged, (void*) OnSteamNetConnectionStatusChanged );
     socket = steamNetworking->CreateListenSocketIP(addr, 1, &options);
 
-    if ( socket == k_HSteamListenSocket_Invalid )
-        printf( "Failed to listen on port %d", port );
-    if ( socket == k_HSteamNetPollGroup_Invalid )
-        printf( "Failed to listen on port %d", port );
+    if ( socket == k_HSteamListenSocket_Invalid ) {
+        printf("Failed to listen on port %d", port);
+        return false;
+    }
+    if ( socket == k_HSteamNetPollGroup_Invalid ) {
+        printf("Failed to listen on port %d", port);
+        return false;
+    }
     printf( "Server listening on port %d\n", port );
 
 
@@ -45,6 +49,7 @@ bool Server::StartServer(uint16 port) {
 Server::~Server() {
     steamNetworking->DestroyPollGroup( connectionPollGroup );
     steamNetworking = nullptr;
+    printf("server cleaned \n");
 }
 
 void Server::DebugOutput( ESteamNetworkingSocketsDebugOutputType eType, const char *pszMsg )
