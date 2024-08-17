@@ -40,3 +40,42 @@ VoiceChatClient/CMakeSettings.json
 VoiceChatServer/.vs/
 VoiceChatServer/out/
 VoiceChatServer/CMakeSettings.json
+VoiceChatServer/vcpkg_installed
+VoiceChatServer/CMakeFiles
+VoiceChatServer/build
+vcpkg-manifest-install.log
+ReRunCMake.make
+CMakeCache.txt
+cmake_install.cmake
+VoiceChatClient/build
+VoiceChatClient/CMakeFiles
+VoiceChatClient/Debug
+VoiceChatClient/vcpkg_installed
+VoiceChatClient/VoiceChatClient.xcodeproj/project.xcworkspace
+VoiceChatServer/VoiceChatServer.xcodeproj/project.xcworkspace
+VoiceChatServer/VoiceChatServer.xcodeproj/xcuserdata
+# Mac OS X
+*.DS_Store
+
+# Xcode
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+project.xcworkspace/
+xcuserdata/
+
+# Generated files
+*.o
+*.pyc
+
+
+#Python modules
+MANIFEST
+dist/
+build/
+
+# Backup files
+*~.nib
+VoiceChatServer/Debug
