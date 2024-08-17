@@ -1,0 +1,759 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		2AE490C47675F3EB74EDBE56 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 6970DA494B4D442E942AE5E3 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				DBF084DB7893E0E70F4B6DB0 /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		B357B354D91135C9CA68AD75 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9FD4179C17B64B758AB2A986 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				EB333E0729109709CA21AA0A /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				00260DFF7E6E4ED99A6E1870 /* PBXTargetDependency */,
+				D0735775756F4B28B7C28898 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		35CBA9C7AF434A0692090618 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 6648F006BE024D948AE56801 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/CMakeLists.txt */; };
+		87C9EE31B05E4037A449789B /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/MessageType.h */ = {isa = PBXBuildFile; fileRef = 7C4FF330993B41E9B10F33B9 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/MessageType.h */; };
+		A080399ECF0649A0BA186C49 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/Server.h */ = {isa = PBXBuildFile; fileRef = 10454113C7BA42EF8CEF46D3 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/Server.h */; };
+		BCE3A5841C96441F9E19FE0D /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/main.cpp */ = {isa = PBXBuildFile; fileRef = 1D163AFC421C4E2FA81AD6E2 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/main.cpp */; };
+		E3406C9059FF4EE1A8704504 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/Server.cpp */ = {isa = PBXBuildFile; fileRef = 1517F1A370674CB3AF16FB69 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/Server.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		06E03495401647FE8B14B07C /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		6B9C913A90504DC2A4162EF6 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		8C12A3128ADC4730832658F5 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+		928D24806CF64E2EBB5A19AA /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		093325C97B2D433B9741CAD2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 62B50E28B76B466B9836E6BB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2AE490C47675F3EB74EDBE56;
+			remoteInfo = ZERO_CHECK;
+		};
+		C3A55B67988C431592B8334A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 62B50E28B76B466B9836E6BB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2AE490C47675F3EB74EDBE56;
+			remoteInfo = ZERO_CHECK;
+		};
+		C9E019753D8B43D48A6D3EF3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 62B50E28B76B466B9836E6BB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CE365DE2F94AF35165973967;
+			remoteInfo = VoiceChatServer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		10454113C7BA42EF8CEF46D3 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/Server.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Server.h; path = Server.h; sourceTree = SOURCE_ROOT; };
+		1517F1A370674CB3AF16FB69 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/Server.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Server.cpp; path = Server.cpp; sourceTree = SOURCE_ROOT; };
+		1D163AFC421C4E2FA81AD6E2 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = main.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
+		5DCF1A78068A4F6A9CA855EF /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		6648F006BE024D948AE56801 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		7C4FF330993B41E9B10F33B9 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/MessageType.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MessageType.h; path = MessageType.h; sourceTree = SOURCE_ROOT; };
+		FF836762CB924F24BD8FF410 /* VoiceChatServer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = VoiceChatServer; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E4AAC760A0D74A7A87B36C62 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		07F69CA7E44C49E8BDB17CDE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		28A4B18B5BEE453B88DDBAEC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FF836762CB924F24BD8FF410 /* VoiceChatServer */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5EA12F79A8A949A29765FF13 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		65CBD255A64A4F91AF3F7ECA = {
+			isa = PBXGroup;
+			children = (
+				F51028C3CB284CC69D5620A1 /* VoiceChatServer */,
+				BB157FF8E450492386E3ECF8 /* ALL_BUILD */,
+				28A4B18B5BEE453B88DDBAEC /* Products */,
+				F6DF460D51E64C5B85F72D60 /* Frameworks */,
+				07F69CA7E44C49E8BDB17CDE /* Resources */,
+			);
+			sourceTree = "<group>";
+		};
+		862390F0347A4428BEF9ED4F /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				7C4FF330993B41E9B10F33B9 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/MessageType.h */,
+				10454113C7BA42EF8CEF46D3 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/Server.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		99609DF8EEB44E1CBF6D95AB /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				1517F1A370674CB3AF16FB69 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/Server.cpp */,
+				1D163AFC421C4E2FA81AD6E2 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/main.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		BB157FF8E450492386E3ECF8 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				5EA12F79A8A949A29765FF13 /* CMake Rules */,
+				5DCF1A78068A4F6A9CA855EF /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		F51028C3CB284CC69D5620A1 /* VoiceChatServer */ = {
+			isa = PBXGroup;
+			children = (
+				99609DF8EEB44E1CBF6D95AB /* Source Files */,
+				862390F0347A4428BEF9ED4F /* Header Files */,
+				6648F006BE024D948AE56801 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/CMakeLists.txt */,
+			);
+			name = VoiceChatServer;
+			sourceTree = "<group>";
+		};
+		F6DF460D51E64C5B85F72D60 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CE365DE2F94AF35165973967 /* VoiceChatServer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5DD9F8695D99453EB3E775CD /* Build configuration list for PBXNativeTarget "VoiceChatServer" */;
+			buildPhases = (
+				D396E1EC62BB4051A2E7A9B6 /* Sources */,
+				E4AAC760A0D74A7A87B36C62 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				35B915EE5634496DA723A22C /* PBXTargetDependency */,
+			);
+			name = VoiceChatServer;
+			productName = VoiceChatServer;
+			productReference = FF836762CB924F24BD8FF410 /* VoiceChatServer */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		62B50E28B76B466B9836E6BB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1520;
+			};
+			buildConfigurationList = 800E79071B084150B7E4EBBE /* Build configuration list for PBXProject "VoiceChatServer" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				06E03495401647FE8B14B07C /* Debug */,
+				6B9C913A90504DC2A4162EF6 /* Release */,
+				928D24806CF64E2EBB5A19AA /* MinSizeRel */,
+				8C12A3128ADC4730832658F5 /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = 65CBD255A64A4F91AF3F7ECA;
+			projectDirPath = .;
+			projectRoot = "";
+			targets = (
+				B357B354D91135C9CA68AD75 /* ALL_BUILD */,
+				CE365DE2F94AF35165973967 /* VoiceChatServer */,
+				2AE490C47675F3EB74EDBE56 /* ZERO_CHECK */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3C0110FC8322DE7E50886E21 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		9B50530E35CC49C82C2FACCF = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		DBF084DB7893E0E70F4B6DB0 /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer
+  make -f /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer
+  make -f /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer
+  make -f /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer
+  make -f /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		EB333E0729109709CA21AA0A /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer
+  echo Build\\ all\\ projects
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D396E1EC62BB4051A2E7A9B6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3406C9059FF4EE1A8704504 /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/Server.cpp */,
+				BCE3A5841C96441F9E19FE0D /* /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/main.cpp */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		00260DFF7E6E4ED99A6E1870 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CE365DE2F94AF35165973967 /* VoiceChatServer */;
+			targetProxy = C9E019753D8B43D48A6D3EF3 /* PBXContainerItemProxy */;
+		};
+		35B915EE5634496DA723A22C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2AE490C47675F3EB74EDBE56 /* ZERO_CHECK */;
+			targetProxy = C3A55B67988C431592B8334A /* PBXContainerItemProxy */;
+		};
+		D0735775756F4B28B7C28898 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2AE490C47675F3EB74EDBE56 /* ZERO_CHECK */;
+			targetProxy = 093325C97B2D433B9741CAD2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		15D277A4B3B746D8A89B26B8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk;
+				SYMROOT = /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/build;
+			};
+			name = Debug;
+		};
+		1974EDE65E644613ABF41076 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SYMROOT = /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/build;
+			};
+			name = Release;
+		};
+		322AE5F98C48442FB1769F10 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		3A365B69751D462EBCF38D72 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		3AE6FAD15E1B4A9A8C7A9597 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/Debug;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",OSX,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = ("/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/debug/lib","$(inherited)");
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "   '-std=gnu++17' ";
+				OTHER_LDFLAGS = (" -Wl,-search_paths_first -Wl,-headerpad_max_install_names","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/debug/lib/libGameNetworkingSockets.dylib","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/debug/lib/libprotobufd.a","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/debug/lib/libcrypto.a","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = VoiceChatServer;
+				SECTORDER_FLAGS = "";
+				SYSTEM_HEADER_SEARCH_PATHS = ("/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/include/GameNetworkingSockets","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/include","$(inherited)");
+				TARGET_TEMP_DIR = "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/build/VoiceChatServer.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		6BB8FD1FCD8F49E59E0DCF08 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/MinSizeRel;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",OSX,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = ("/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/lib","$(inherited)");
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=gnu++17' ";
+				OTHER_LDFLAGS = (" -Wl,-search_paths_first -Wl,-headerpad_max_install_names","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/lib/libGameNetworkingSockets.dylib","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/lib/libprotobuf.a","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/debug/lib/libcrypto.a","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = VoiceChatServer;
+				SECTORDER_FLAGS = "";
+				SYSTEM_HEADER_SEARCH_PATHS = ("/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/include/GameNetworkingSockets","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/include","$(inherited)");
+				TARGET_TEMP_DIR = "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/build/VoiceChatServer.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		7A79E80EFB5A4F3787587AAC /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/RelWithDebInfo;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",OSX,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = ("/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/lib","$(inherited)");
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=gnu++17' ";
+				OTHER_LDFLAGS = (" -Wl,-search_paths_first -Wl,-headerpad_max_install_names","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/lib/libGameNetworkingSockets.dylib","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/lib/libprotobuf.a","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/debug/lib/libcrypto.a","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = VoiceChatServer;
+				SECTORDER_FLAGS = "";
+				SYSTEM_HEADER_SEARCH_PATHS = ("/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/include/GameNetworkingSockets","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/include","$(inherited)");
+				TARGET_TEMP_DIR = "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/build/VoiceChatServer.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		9CA0EA0378F34EF1B0CF7658 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		A81DE38937494EC5AB57FBFA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/Release;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",OSX,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = ("/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/lib","$(inherited)");
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=gnu++17' ";
+				OTHER_LDFLAGS = (" -Wl,-search_paths_first -Wl,-headerpad_max_install_names","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/lib/libGameNetworkingSockets.dylib","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/lib/libprotobuf.a","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/debug/lib/libcrypto.a","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = VoiceChatServer;
+				SECTORDER_FLAGS = "";
+				SYSTEM_HEADER_SEARCH_PATHS = ("/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/include/GameNetworkingSockets","/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/vcpkg_installed/arm64-osx/include","$(inherited)");
+				TARGET_TEMP_DIR = "/Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/build/VoiceChatServer.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		B9E411DC611840A29AB24309 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		BCFED21B88F3492E8DC710C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		C66E28B586E744E3973D3254 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		C707DEC6E9B440749A472730 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SYMROOT = /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/build;
+			};
+			name = RelWithDebInfo;
+		};
+		C85DDA33671341DDAD87A083 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		E0671E898F114814A6EB8CC2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		E88ED7A1936548FE837A1AF8 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SYMROOT = /Users/amin/Documents/CPPProjects/SimpeVoiceChat/VoiceChatServer/build;
+			};
+			name = MinSizeRel;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5DD9F8695D99453EB3E775CD /* Build configuration list for PBXNativeTarget "VoiceChatServer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AE6FAD15E1B4A9A8C7A9597 /* Debug */,
+				A81DE38937494EC5AB57FBFA /* Release */,
+				6BB8FD1FCD8F49E59E0DCF08 /* MinSizeRel */,
+				7A79E80EFB5A4F3787587AAC /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6970DA494B4D442E942AE5E3 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BCFED21B88F3492E8DC710C8 /* Debug */,
+				C66E28B586E744E3973D3254 /* Release */,
+				B9E411DC611840A29AB24309 /* MinSizeRel */,
+				322AE5F98C48442FB1769F10 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		800E79071B084150B7E4EBBE /* Build configuration list for PBXProject "VoiceChatServer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				15D277A4B3B746D8A89B26B8 /* Debug */,
+				1974EDE65E644613ABF41076 /* Release */,
+				E88ED7A1936548FE837A1AF8 /* MinSizeRel */,
+				C707DEC6E9B440749A472730 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9FD4179C17B64B758AB2A986 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E0671E898F114814A6EB8CC2 /* Debug */,
+				3A365B69751D462EBCF38D72 /* Release */,
+				9CA0EA0378F34EF1B0CF7658 /* MinSizeRel */,
+				C85DDA33671341DDAD87A083 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 62B50E28B76B466B9836E6BB /* Project object */;
+}
