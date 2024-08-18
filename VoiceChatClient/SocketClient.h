@@ -27,7 +27,7 @@ private:
 public:
     bool IsConnected();
     bool Connect(SteamNetworkingIPAddr add);
-    void PollIncomingMessages(AUDIO_SAMPLE* _voiceOutputBuffer);
+    void PollIncomingMessages(NetworkBuffer* _voiceOutputBuffer);
     void PollConnectionStateChanges();
     void Send(const void* data, uint32 size);
     SocketClient();

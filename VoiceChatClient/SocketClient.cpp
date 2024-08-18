@@ -128,7 +128,7 @@ bool SocketClient::Connect(SteamNetworkingIPAddr add) {
 }
 
 int receiveCounter = 0;
-void SocketClient::PollIncomingMessages(AUDIO_SAMPLE* _voiceOutputBuffer)
+void SocketClient::PollIncomingMessages(NetworkBuffer* _voiceAudioBuffer)
 {
     if (connection == k_HSteamNetConnection_Invalid){
         printf("connection is invalid \n");
@@ -162,15 +162,15 @@ void SocketClient::PollIncomingMessages(AUDIO_SAMPLE* _voiceOutputBuffer)
             pIncomingMsg->Release();
             continue;
         }
+        _voiceAudioBuffer->ResetData();
 
         // Playback
-        long delay = 1000000 / 22500;
         const size_t buffer_size = audioData->inputCurrentCounter;
         for (size_t i = 0; i < buffer_size; ++i) {
             if (audioData->Input[i] != 0)
-                _voiceOutputBuffer[i] = audioData->Input[i];
+                _voiceAudioBuffer->AddInput(audioData->Input[i]);
             printf("%d," , audioData->Input[i]);
-            std::this_thread::sleep_for( std::chrono::microseconds ( delay ) );
+            //std::this_thread::sleep_for( std::chrono::microseconds ( delay ) );
         }
         printf("\n");
 

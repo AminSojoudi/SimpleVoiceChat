@@ -5,16 +5,17 @@
 #include "AudioTools.h"
 
 #define FRAMES_PER_BUFFER (512)
-#define SAMPLE_RATE   (22500)
+#define SAMPLE_RATE   (44100)
 
 AudioData data;
+NetworkBuffer networkBuffer;
 SocketClient* clientSocket;
 
 int counter = 0;
 
-void DoNetwork(const AudioData &_data, AUDIO_SAMPLE* _voiceOutputBuffer){
+void DoNetwork(const AudioData &_data){
 
-    clientSocket->PollIncomingMessages(_voiceOutputBuffer);
+    clientSocket->PollIncomingMessages(&networkBuffer);
     clientSocket->PollConnectionStateChanges();
 
     if (!clientSocket->IsConnected()){
@@ -63,12 +64,21 @@ int AudioTools::patestCallback( const void *inputBuffer, void *outputBuffer,
         // recording
         _data->AddInput(input[i]);
     }
-
-    if (_data->sampleCounter % 1 == 0){
-        DoNetwork(data, output);
-        // clear input queue
-        _data->inputCurrentCounter = 0;
+    
+    for (i =0; i < networkBuffer.Size() ; i++) {
+        auto value = networkBuffer.ReadAt(i);
+        if (value.has_value())
+        {
+            output[i] = *value;
+        }
     }
+    networkBuffer.ResetData();
+
+    //if (_data->BufferIsAlmostFull()){
+        DoNetwork(data);
+        // clear input queue
+        _data->ResetData();
+    //}
 
     return 0;
 }
@@ -92,7 +102,7 @@ bool AudioTools::StartRecording(SteamNetworkingIPAddr serverAddress) {
     err = Pa_OpenDefaultStream( &stream,
                                 1,       /* 1 input channel */
                                 1,     /* stereo output */
-                                paInt16,  /* 32 bit floating point output */
+                                paInt8,  /* 32 bit floating point output */
                                 SAMPLE_RATE,
                                 FRAMES_PER_BUFFER, /* frames per buffer i.e. the number
                                                    of sample frames that PortAudio will
