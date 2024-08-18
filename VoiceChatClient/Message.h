@@ -36,6 +36,8 @@
 #include "portaudio.h"
 #include <queue>
 #include <cassert>
+#include "ConcurrentBag.hpp"
+
 
 typedef short AUDIO_SAMPLE;
 #define BufferSize 1024
@@ -43,15 +45,57 @@ typedef short AUDIO_SAMPLE;
 struct AudioData{
     AUDIO_SAMPLE Input[BufferSize];
     int sampleCounter;
-    int inputCurrentCounter = 0;
+    int inputCurrentCounter = -1;
 
     AudioData(){
-        sampleCounter = 0;
+        sampleCounter = -1;
     }
 
     void AddInput(AUDIO_SAMPLE sample){
         if (inputCurrentCounter < BufferSize)
-            Input[inputCurrentCounter++] = sample;
+            Input[++inputCurrentCounter] = sample;
+        else
+            printf("buffer is full \r\n");
+    }
+    
+    bool BufferIsAlmostFull(){
+        if (inputCurrentCounter < BufferSize * 0.9) {
+            return false;
+        }
+        return true;
+    }
+    
+    void ResetData(){
+        inputCurrentCounter = -1;
+    }
+};
+
+
+struct NetworkBuffer{
+    ConcurrentBag<AUDIO_SAMPLE> buffer;
+    
+    NetworkBuffer() : buffer(BufferSize) {}
+
+    void AddInput(AUDIO_SAMPLE sample){
+        if (buffer.Size() >= BufferSize)
+            printf("buffer is full \r\n");
+        buffer.Add(sample);
+    }
+    
+    bool BufferIsFull(){
+        return buffer.Size() == BufferSize;
+    }
+    
+    size_t Size() const{
+        return buffer.Size();
+    }
+    
+    std::optional<AUDIO_SAMPLE> ReadAt(size_t i){
+        return buffer.GetAt(i);
+    }
+    
+    void ResetData(){
+        buffer.Reset();
     }
 };
 
