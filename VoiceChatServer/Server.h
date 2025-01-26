@@ -22,6 +22,7 @@
 #include <Winsock2.h>
 #include <Ws2tcpip.h>
 #include <string>
+#include <csignal>
 #else
 #include <arpa/inet.h>
 #endif
