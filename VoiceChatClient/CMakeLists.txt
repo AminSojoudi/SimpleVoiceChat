@@ -1,5 +1,3 @@
-# Windows -DPORTAUDIO_LINK=portaudio
-# Linux/Mac -DPORTAUDIO_LINK=portaudio_static
 cmake_minimum_required(VERSION 3.20)
 project(VoiceChatClient)
 

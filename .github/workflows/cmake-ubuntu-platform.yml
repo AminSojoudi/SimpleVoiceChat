@@ -39,6 +39,7 @@ jobs:
         cd vcpkg
         ./bootstrap-vcpkg.sh
         ./vcpkg integrate install
+        ./vcpkg install rtaudio:x64-linux
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -46,7 +47,6 @@ jobs:
       run: cmake -B ${{github.workspace}}/build 
             -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
             -DCMAKE_TOOLCHAIN_FILE=${{ steps.strings.outputs.client-dir }}/vcpkg/scripts/buildsystems/vcpkg.cmake
-            -DPORTAUDIO_LINK=portaudio_static
 
     - name: Build
       # Build your program with the given configuration
