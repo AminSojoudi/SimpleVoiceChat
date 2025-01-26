@@ -169,8 +169,8 @@ void SocketClient::PollIncomingMessages(NetworkBuffer* _voiceAudioBuffer)
         for (size_t i = 0; i < buffer_size; ++i) {
             if (audioData->Input[i] != 0)
                 _voiceAudioBuffer->AddInput(audioData->Input[i]);
-            printf("%d," , audioData->Input[i]);
-            //std::this_thread::sleep_for( std::chrono::microseconds ( delay ) );
+            // Only enable this part for debugging, any action here causes delays on the voice
+            //printf("%d," , audioData->Input[i]);
         }
         printf("\n");
 

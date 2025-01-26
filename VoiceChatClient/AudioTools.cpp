@@ -7,6 +7,9 @@
 #define FRAMES_PER_BUFFER (512)
 #define SAMPLE_RATE   (44100)
 
+//typedef signed short MY_TYPE;
+//#define FORMAT RTAUDIO_SINT16
+
 AudioData data;
 NetworkBuffer networkBuffer;
 SocketClient* clientSocket;
@@ -22,12 +25,13 @@ void DoNetwork(const AudioData &_data){
         return;
     }
 
-    printf("sending data with size %d : \n", _data.inputCurrentCounter);
+    // Only enable this part for debugging, any action here causes delays on the voice
+    /*printf("sending data with size %d : \n", _data.inputCurrentCounter);
     printf("send counter is %d \n", ++counter);
     for (int i = 0; i < _data.inputCurrentCounter; ++i) {
         printf("%d," , _data.Input[i]);
     }
-    printf("\n");
+    printf("\n");*/
 
     clientSocket->Send(&_data, sizeof(_data));
 }
@@ -66,7 +70,8 @@ int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
         auto value = networkBuffer.ReadAt(i);
         if (value.has_value())
         {
-            output[i] = *value;
+            output[2 * i] = *value; // left
+            output[2 * i + 1] = *value; // right
         }
     }
     networkBuffer.ResetData();
@@ -90,24 +95,38 @@ bool AudioTools::StartRecording(SteamNetworkingIPAddr serverAddress) {
 
     try
     {
-        std::vector<unsigned int> deviceIds = audio.getDeviceIds();
-        if (deviceIds.size() < 1) {
-            std::cout << "\nNo audio devices found!\n";
-            exit(0);
+        if (audio.getDeviceCount() < 1) {
+            std::cerr << "No audio devices found!\n";
+            return 1;
         }
+        audio.showWarnings(true);
 
-        RtAudio::StreamParameters parameters;
-        parameters.deviceId = audio.getDefaultInputDevice();
-        parameters.nChannels = 2;
-        parameters.firstChannel = 0;
+        // Parameters
         unsigned int sampleRate = 44100;
-        unsigned int bufferFrames = 256; // 256 sample frames
+        unsigned int bufferFrames = 256; // frames per buffer
+        RtAudio::StreamParameters iParams, oParams;
 
-        if (audio.openStream(NULL, &parameters, RTAUDIO_SINT16,
-            sampleRate, &bufferFrames, &record)) {
-            std::cout << '\n' << audio.getErrorText() << '\n' << std::endl;
-            exit(0); // problem with device settings
-        }
+        // --- MONO INPUT ---
+        iParams.deviceId = audio.getDefaultInputDevice();
+        iParams.nChannels = 1;
+        iParams.firstChannel = 0;
+
+        // --- STEREO OUTPUT ---
+        oParams.deviceId = audio.getDefaultOutputDevice();
+        oParams.nChannels = 2;
+        oParams.firstChannel = 0;
+
+        // Options
+        RtAudio::StreamOptions options;
+        options.flags = RTAUDIO_HOG_DEVICE | RTAUDIO_SCHEDULE_REALTIME;
+
+        audio.openStream(
+            &oParams, &iParams,
+            RTAUDIO_SINT16, sampleRate,
+            &bufferFrames,
+            &record,
+            &data
+        );
 
         // Stream is open ... now start it.
         if (audio.startStream()) {
