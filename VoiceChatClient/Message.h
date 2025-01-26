@@ -33,14 +33,14 @@
 #include <stdio.h>
 #include <thread>
 #include "queue"
-#include "portaudio.h"
+#include "rtaudio/RtAudio.h"
 #include <queue>
 #include <cassert>
 #include "ConcurrentBag.hpp"
 
 
-typedef short AUDIO_SAMPLE;
-#define BufferSize 1024
+typedef uint16 AUDIO_SAMPLE;
+#define BufferSize 256
 
 struct AudioData{
     AUDIO_SAMPLE Input[BufferSize];

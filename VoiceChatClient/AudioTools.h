@@ -11,14 +11,9 @@
 
 class AudioTools {
 private:
-    PaStream *stream;
-    PaError err;
+    RtAudio audio;
 
-    static int patestCallback( const void *inputBuffer, void *outputBuffer,
-                               unsigned long framesPerBuffer,
-                               const PaStreamCallbackTimeInfo* timeInfo,
-                               PaStreamCallbackFlags statusFlags,
-                               void *userData );
+    //int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void* userData);
 
 public:
     bool StartRecording(SteamNetworkingIPAddr serverAddress);
