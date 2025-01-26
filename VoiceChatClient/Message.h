@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <thread>
 #include "queue"
-#include "portaudio.h"
+#include "rtaudio/RtAudio.h"
 #include <queue>
 #include <cassert>
 #include "ConcurrentBag.hpp"
