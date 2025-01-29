@@ -6,13 +6,13 @@ Simple C++ UDP based Voice Chat Application using Valve [Game Network Sockets](h
 
 # TODO
 - [X] Make Client Multiplatform
-- [ ] Separate Network thread from Audio thread
+- [X] Separate Network thread from Audio thread
 - [ ] Improve Client/Server connection handling with proper logs
 - [ ] Check Projects for memory leaks and consumption
 - [ ] Enhance codes
 - [ ] Dockerize Server and push to DockerHub
 - [ ] Make Releases for Client in Github
-- [ ] Automate Builds
+- [X] Automate Builds
 - [ ] Add log Level functionality to server and client
 - [ ] improve resiliency to different network bandwidths and network changes
 - [ ] Calculate bandwith usage
