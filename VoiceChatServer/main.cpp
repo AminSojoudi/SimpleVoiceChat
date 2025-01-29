@@ -31,7 +31,7 @@ int main(int argc, const char *argv[] )
         server->PollIncomingMessages();
         server->PollConnectionStateChanges();
 
-        std::this_thread::sleep_for( std::chrono::milliseconds( 10 ) );
+        std::this_thread::sleep_for( std::chrono::milliseconds( 30 ) );
     }
     // clean up
     if (socket_success){

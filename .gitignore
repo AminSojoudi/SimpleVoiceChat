@@ -80,3 +80,4 @@ build/
 *~.nib
 VoiceChatServer/Debug
 *.pbxproj
+VoiceChatServer/enc_temp_folder/

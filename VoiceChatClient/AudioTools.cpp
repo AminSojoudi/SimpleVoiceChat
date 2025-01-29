@@ -26,12 +26,12 @@ void DoNetwork(const AudioData &_data){
     }
 
     // Only enable this part for debugging, any action here causes delays on the voice
-    /*printf("sending data with size %d : \n", _data.inputCurrentCounter);
-    printf("send counter is %d \n", ++counter);
-    for (int i = 0; i < _data.inputCurrentCounter; ++i) {
-        printf("%d," , _data.Input[i]);
-    }
-    printf("\n");*/
+    //printf("sending data with size %d : \n", _data.inputCurrentCounter);
+    //printf("send counter is %d \n", ++counter);
+    //for (int i = 0; i < _data.inputCurrentCounter; ++i) {
+    //    printf("%d," , _data.Input[i]);
+    //}
+    //printf("\n");
 
     clientSocket->Send(&_data, sizeof(_data));
 }
@@ -60,27 +60,29 @@ int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
 
     for (i = 0; i < nBufferFrames; i++)
     {
-        //output[i] = input[i];     // loop back
+        //output[2* i] = input[i];     // loop back
+        //output[2* i + 1] = input[i];     // loop back
 
         // recording
         _data->AddInput(input[i]);
     }
 
-    for (i = 0; i < networkBuffer.Size(); i++) {
-        auto value = networkBuffer.ReadAt(i);
-        if (value.has_value())
-        {
-            output[2 * i] = *value; // left
-            output[2 * i + 1] = *value; // right
+    if (networkBuffer.Size() >= nBufferFrames)
+    {
+        for (i = 0; i < nBufferFrames; i++) {
+            auto value = networkBuffer.ReadAt(i);
+            if (value.has_value())
+            {
+                output[2 * i] = *value; // left
+                output[2 * i + 1] = *value; // right
+            }
         }
+        networkBuffer.RemoveFirstItems(nBufferFrames);
     }
-    networkBuffer.ResetData();
 
-    //if (_data->BufferIsAlmostFull()){
     DoNetwork(data);
     // clear input queue
     _data->ResetData();
-    //}
 
     return 0;
 }

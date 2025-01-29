@@ -162,7 +162,7 @@ void SocketClient::PollIncomingMessages(NetworkBuffer* _voiceAudioBuffer)
             pIncomingMsg->Release();
             continue;
         }
-        _voiceAudioBuffer->ResetData();
+        //_voiceAudioBuffer->ResetData();
 
         // Playback
         const size_t buffer_size = audioData->inputCurrentCounter;

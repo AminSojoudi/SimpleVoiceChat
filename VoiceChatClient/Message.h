@@ -41,6 +41,7 @@
 
 typedef uint16 AUDIO_SAMPLE;
 #define BufferSize 256
+#define NetworkBufferSize 4096
 
 struct AudioData{
     AUDIO_SAMPLE Input[BufferSize];
@@ -74,16 +75,16 @@ struct AudioData{
 struct NetworkBuffer{
     ConcurrentBag<AUDIO_SAMPLE> buffer;
     
-    NetworkBuffer() : buffer(BufferSize) {}
+    NetworkBuffer() : buffer(NetworkBufferSize) {}
 
     void AddInput(AUDIO_SAMPLE sample){
-        if (buffer.Size() >= BufferSize)
+        if (buffer.Size() >= NetworkBufferSize)
             printf("buffer is full \r\n");
         buffer.Add(sample);
     }
     
     bool BufferIsFull(){
-        return buffer.Size() == BufferSize;
+        return buffer.Size() == NetworkBufferSize;
     }
     
     size_t Size() const{
@@ -96,6 +97,10 @@ struct NetworkBuffer{
     
     void ResetData(){
         buffer.Reset();
+    }
+
+    void RemoveFirstItems(int numbers) {
+        buffer.Erase(numbers);
     }
 };
 

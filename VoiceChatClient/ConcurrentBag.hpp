@@ -24,6 +24,7 @@ public:
     bool IsEmpty() const;
     size_t Size() const;
     void Reset();
+    void Erase(int numberOfItems);
 
 private:
     std::vector<T> items_;
@@ -83,6 +84,13 @@ template<typename T>
 void ConcurrentBag<T>::Reset() {
     std::lock_guard<std::mutex> lock(mutex_);
     items_.clear();
+}
+
+template<typename T>
+inline void ConcurrentBag<T>::Erase(int numberOfItems)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    items_.erase(items_.begin(), items_.begin() + numberOfItems);
 }
 
 #endif // CONCURRENT_BAG_H
