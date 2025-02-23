@@ -5,8 +5,9 @@
 #ifndef VOICECHATCLIENT_AUDIOTOOLS_H
 #define VOICECHATCLIENT_AUDIOTOOLS_H
 
-#include "Message.h"
+#include "Messages/AudioMessage.h"
 #include "SocketClient.h"
+#include "rtaudio/RtAudio.h"
 
 
 class AudioTools {
@@ -16,7 +17,7 @@ private:
     //int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void* userData);
 
 public:
-    bool StartRecording(SteamNetworkingIPAddr serverAddress);
+    bool StartRecording(SteamNetworkingIPAddr serverAddress, std::string topic);
     bool StopRecording();
     ~AudioTools();
 };

@@ -88,12 +88,12 @@ int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
 }
 
 
-bool AudioTools::StartRecording(SteamNetworkingIPAddr serverAddress) {
+bool AudioTools::StartRecording(SteamNetworkingIPAddr serverAddress, std::string topic) {
 
     // create network socket
     clientSocket = new SocketClient();
 
-    clientSocket->Connect(serverAddress);
+    clientSocket->Connect(serverAddress, topic);
 
     try
     {

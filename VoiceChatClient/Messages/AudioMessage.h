@@ -6,6 +6,10 @@
 #define VOICECHATCLIENT_MESSAGE_H
 
 
+#include "MessageTypes.h"
+
+
+
 
 #define PLATFORM_WINDOWS  1
 #define PLATFORM_MAC      2
@@ -28,15 +32,6 @@
 #include <arpa/inet.h>
 #endif
 
-#include <steam/steamnetworkingsockets.h>
-#include <steam/isteamnetworkingutils.h>
-#include <stdio.h>
-#include <thread>
-#include "queue"
-#include "rtaudio/RtAudio.h"
-#include <queue>
-#include <cassert>
-#include "ConcurrentBag.hpp"
 
 
 typedef uint16 AUDIO_SAMPLE;
@@ -44,6 +39,7 @@ typedef uint16 AUDIO_SAMPLE;
 #define NetworkBufferSize 4096
 
 struct AudioData{
+    MessageType type = AUDIO;
     AUDIO_SAMPLE Input[BufferSize];
     int sampleCounter;
     int inputCurrentCounter = -1;
@@ -68,39 +64,6 @@ struct AudioData{
     
     void ResetData(){
         inputCurrentCounter = -1;
-    }
-};
-
-
-struct NetworkBuffer{
-    ConcurrentBag<AUDIO_SAMPLE> buffer;
-    
-    NetworkBuffer() : buffer(NetworkBufferSize) {}
-
-    void AddInput(AUDIO_SAMPLE sample){
-        if (buffer.Size() >= NetworkBufferSize)
-            printf("buffer is full \r\n");
-        buffer.Add(sample);
-    }
-    
-    bool BufferIsFull(){
-        return buffer.Size() == NetworkBufferSize;
-    }
-    
-    size_t Size() const{
-        return buffer.Size();
-    }
-    
-    std::optional<AUDIO_SAMPLE> ReadAt(size_t i){
-        return buffer.GetAt(i);
-    }
-    
-    void ResetData(){
-        buffer.Reset();
-    }
-
-    void RemoveFirstItems(int numbers) {
-        buffer.Erase(numbers);
     }
 };
 

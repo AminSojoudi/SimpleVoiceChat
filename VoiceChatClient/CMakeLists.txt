@@ -12,6 +12,6 @@ add_executable(VoiceChatClient main.cpp
         SocketClient.h
         AudioTools.cpp
         AudioTools.h
-        Message.h)
+        "Messages/AudioMessage.h" "Messages/SetTopicMessage.h" "Messages/MessageTypes.h" "Utils.h")
 
 target_link_libraries(VoiceChatClient GameNetworkingSockets::shared RtAudio::rtaudio)

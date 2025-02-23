@@ -6,7 +6,10 @@ int main(int argc, const char *argv[] ) {
 
     in_addr buf;
     SteamNetworkingIPAddr serverAddress;
-    serverAddress.SetIPv4(2130706433, 27020);   // localhost
+    inet_pton(AF_INET, "127.0.0.1", &buf); // localhost as default address
+    serverAddress.SetIPv4(htonl(buf.s_addr), 27020);
+
+    std::string topic = "default";
 
     if (argc == 4)
     {
@@ -16,10 +19,11 @@ int main(int argc, const char *argv[] ) {
             printf("failed to set address\n");
             return 1;
         }
+        topic = argv[4];
     }
     else
     {
-        printf("usage: ./client [serverAddress] [port] [logLevel] \n");
+        printf("usage: ./client [serverAddress] [port] [topic] \n");
         printf("Server add and port not defined, using defaults \n");
     }
 
@@ -37,7 +41,7 @@ int main(int argc, const char *argv[] ) {
 
     bool quit = false;
 
-    audioTools->StartRecording(serverAddress);
+    audioTools->StartRecording(serverAddress, topic);
 
 
     while (!quit){
