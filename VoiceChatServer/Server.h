@@ -40,6 +40,11 @@
 #endif
 
 
+#include "../Common/Messages/MessageTypes.h"
+#include "../Common/Messages/AudioMessage.h"
+#include "../Common/Messages/SetTopicMessage.h"
+
+
 class Server {
 private:
     HSteamListenSocket socket;

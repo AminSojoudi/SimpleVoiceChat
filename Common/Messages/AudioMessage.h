@@ -2,44 +2,19 @@
 // Created by Amin on 11/14/23.
 //
 
-#ifndef VOICECHATCLIENT_MESSAGE_H
-#define VOICECHATCLIENT_MESSAGE_H
+#pragma once
 
 
 #include "MessageTypes.h"
-
-
-
-
-#define PLATFORM_WINDOWS  1
-#define PLATFORM_MAC      2
-#define PLATFORM_UNIX     3
-
-#if defined(_WIN32)
-#define PLATFORM PLATFORM_WINDOWS
-#elif defined(__APPLE__)
-#define PLATFORM PLATFORM_MAC
-#else
-#define PLATFORM PLATFORM_UNIX
-#endif
-
-
-#if PLATFORM == PLATFORM_WINDOWS
-#include <Winsock2.h>
-#include <Ws2tcpip.h>
-#include <string>
-#else
-#include <arpa/inet.h>
-#endif
+#include "stdio.h"
 
 
 
 typedef uint16 AUDIO_SAMPLE;
-#define BufferSize 256
-#define NetworkBufferSize 4096
+#define BufferSize 1024
 
 struct AudioData{
-    MessageType type = AUDIO;
+    uint8_t type = AUDIO;
     AUDIO_SAMPLE Input[BufferSize];
     int sampleCounter;
     int inputCurrentCounter = -1;
@@ -68,5 +43,5 @@ struct AudioData{
 };
 
 
-#endif //VOICECHATCLIENT_MESSAGE_H
+#undef BufferSize
 

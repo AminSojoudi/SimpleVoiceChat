@@ -5,9 +5,10 @@ find_package( GameNetworkingSockets CONFIG REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
+
 add_executable(VoiceChatServer main.cpp
         Server.cpp
         Server.h
-        MessageType.h)
+         "../Common/Messages/AudioMessage.h" "../Common/Messages/MessageTypes.h" "../Common/Messages/SetTopicMessage.h" "TopicConnectionHandler.cpp" "TopicConnectionHandler.h")
 
 target_link_libraries(VoiceChatServer GameNetworkingSockets::shared)
