@@ -11,15 +11,12 @@
 //#define FORMAT RTAUDIO_SINT16
 
 AudioData data;
-NetworkBuffer networkBuffer;
+NetworkBuffer* networkBuffer;
 SocketClient* clientSocket;
 
 int counter = 0;
 
 void DoNetwork(const AudioData &_data){
-
-    clientSocket->PollIncomingMessages(&networkBuffer);
-    clientSocket->PollConnectionStateChanges();
 
     if (!clientSocket->IsConnected()){
         return;
@@ -67,17 +64,17 @@ int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
         _data->AddInput(input[i]);
     }
 
-    if (networkBuffer.Size() >= nBufferFrames)
+    if (networkBuffer->Size() >= nBufferFrames)
     {
         for (i = 0; i < nBufferFrames; i++) {
-            auto value = networkBuffer.ReadAt(i);
+            auto value = networkBuffer->ReadAt(i);
             if (value.has_value())
             {
                 output[2 * i] = *value; // left
                 output[2 * i + 1] = *value; // right
             }
         }
-        networkBuffer.RemoveFirstItems(nBufferFrames);
+        networkBuffer->RemoveFirstItems(nBufferFrames);
     }
 
     DoNetwork(data);
@@ -88,13 +85,10 @@ int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
 }
 
 
-bool AudioTools::StartRecording(SteamNetworkingIPAddr serverAddress, std::string topic) {
+bool AudioTools::StartRecording(SocketClient* socketClient, NetworkBuffer* buffer) {
 
-    // create network socket
-    clientSocket = new SocketClient();
-
-    clientSocket->Connect(serverAddress, topic);
-
+    clientSocket = socketClient;
+    networkBuffer = buffer;
     try
     {
         if (audio.getDeviceCount() < 1) {

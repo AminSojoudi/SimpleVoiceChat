@@ -1,17 +1,37 @@
 //
 // Created by Amin on 10/17/23.
 //
+#pragma once
 
-#ifndef VOICECHATCLIENT_SOCKETCLIENT_H
-#define VOICECHATCLIENT_SOCKETCLIENT_H
-
-#include "Messages/MessageTypes.h"
-#include "Messages/AudioMessage.h"
-#include "Messages/SetTopicMessage.h"
+#include "../Common/Messages/MessageTypes.h"
+#include "../Common/Messages/AudioMessage.h"
+#include "../Common/Messages/SetTopicMessage.h"
 #include "Utils.h"
 #include <steam/isteamnetworkingutils.h>
 #include <cassert>
 
+
+
+#define PLATFORM_WINDOWS  1
+#define PLATFORM_MAC      2
+#define PLATFORM_UNIX     3
+
+#if defined(_WIN32)
+#define PLATFORM PLATFORM_WINDOWS
+#elif defined(__APPLE__)
+#define PLATFORM PLATFORM_MAC
+#else
+#define PLATFORM PLATFORM_UNIX
+#endif
+
+
+#if PLATFORM == PLATFORM_WINDOWS
+#include <Winsock2.h>
+#include <Ws2tcpip.h>
+#include <string>
+#else
+#include <arpa/inet.h>
+#endif
 
 
 #ifndef STEAMNETWORKINGSOCKETS_OPENSOURCE
@@ -39,6 +59,3 @@ public:
     SocketClient();
     ~SocketClient();
 };
-
-
-#endif //VOICECHATCLIENT_SOCKETCLIENT_H

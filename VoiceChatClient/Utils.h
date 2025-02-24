@@ -1,9 +1,10 @@
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 
 
 #include "ConcurrentBag.hpp"
-#include "Messages/AudioMessage.h"
+#include "../Common/Messages/AudioMessage.h"
+
+#define NetworkBufferSize 4096
 
 struct NetworkBuffer {
     ConcurrentBag<AUDIO_SAMPLE> buffer;
@@ -37,4 +38,4 @@ struct NetworkBuffer {
     }
 };
 
-#endif // UTILS_H
+#undef NetworkBufferSize

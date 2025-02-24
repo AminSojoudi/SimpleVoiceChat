@@ -2,7 +2,6 @@
 // Created by Amin on 10/15/23.
 //
 #include "Server.h"
-#include "MessageType.h"
 
 Server* Server::Instance = nullptr;
 SteamNetworkingMicroseconds Server::g_logTimeZero;
@@ -234,21 +233,26 @@ void Server::PollIncomingMessages() {
             break;
         }
 
+        uint8_t messageType = ((uint8_t*)pIncomingMsg->m_pData)[0];
 
-        auto* data = (AudioData *) pIncomingMsg->m_pData;
-
-
-        printf("size of received data: %u \n", pIncomingMsg->GetSize());
+        printf("message type is %d \n", messageType);
 
 
-        steamNetworking->SendMessageToConnection( pIncomingMsg->m_conn, pIncomingMsg->m_pData, pIncomingMsg->GetSize(),
-                                                  k_nSteamNetworkingSend_ReliableNoNagle,
-                                                  nullptr );
-
-
-        printf("Data received on server, data size = %u bytes\n", pIncomingMsg->GetSize());
-
-
+        switch (messageType)
+        {
+            case SET_TOPIC:
+                // TODO
+                break;
+            case AUDIO:
+                printf("size of received data: %u \n", pIncomingMsg->GetSize());
+                steamNetworking->SendMessageToConnection(pIncomingMsg->m_conn, pIncomingMsg->m_pData, pIncomingMsg->GetSize(),
+                    k_nSteamNetworkingSend_ReliableNoNagle,
+                    nullptr);
+                printf("Data received on server, data size = %u bytes\n", pIncomingMsg->GetSize());
+                break;
+            default:
+                break;
+        }
 
         // We don't need this anymore.
         pIncomingMsg->Release();

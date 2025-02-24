@@ -1,11 +1,12 @@
 #include <iostream>
 #include "AudioTools.h"
-#include "queue"
 
 int main(int argc, const char *argv[] ) {
 
     in_addr buf;
     SteamNetworkingIPAddr serverAddress;
+    NetworkBuffer networkBuffer;
+
     inet_pton(AF_INET, "127.0.0.1", &buf); // localhost as default address
     serverAddress.SetIPv4(htonl(buf.s_addr), 27020);
 
@@ -41,10 +42,25 @@ int main(int argc, const char *argv[] ) {
 
     bool quit = false;
 
-    audioTools->StartRecording(serverAddress, topic);
+    // create network socket
+    auto clientSocket = new SocketClient();
+
+    clientSocket->Connect(serverAddress, topic);
+
+    SetTopicData message;
+    message.topic = topic;
+
+    clientSocket->Send(&message, sizeof(message));
+
+
+    audioTools->StartRecording(clientSocket, &networkBuffer);
 
 
     while (!quit){
+
+        clientSocket->PollIncomingMessages(&networkBuffer);
+        clientSocket->PollConnectionStateChanges();
+
 
         std::this_thread::sleep_for( std::chrono::milliseconds( 30 ) );
 
