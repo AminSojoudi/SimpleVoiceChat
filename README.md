@@ -2,7 +2,7 @@
 [![Windows CI](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-windows-platform.yml/badge.svg?branch=main)](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-windows-platform.yml)
 [![Ubuntu CI](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-ubuntu-platform.yml/badge.svg?branch=main)](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-ubuntu-platform.yml)
 # SimpeVoiceChat
-Simple C++ UDP based Voice Chat Application using Valve [Game Network Sockets](https://github.com/ValveSoftware/GameNetworkingSockets) and [RTAudio]([https://github.com/PortAudio/portaudio](https://github.com/thestk/rtaudio))
+Simple C++ UDP based Voice Chat Application using Valve [Game Network Sockets](https://github.com/ValveSoftware/GameNetworkingSockets) and [RTAudio](https://github.com/thestk/rtaudio)
 
 # TODO
 - [X] Make Client Multiplatform
