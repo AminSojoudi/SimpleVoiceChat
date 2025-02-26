@@ -5,6 +5,6 @@
 
 enum MessageType
 {
-	SET_TOPIC = 1,
+	SET_CHANNEL = 1,
 	AUDIO = 2
 };

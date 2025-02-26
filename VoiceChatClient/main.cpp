@@ -10,7 +10,7 @@ int main(int argc, const char *argv[] ) {
     inet_pton(AF_INET, "127.0.0.1", &buf); // localhost as default address
     serverAddress.SetIPv4(htonl(buf.s_addr), 27020);
 
-    std::string topic = "default";
+    int64 channel = 0; // default channel
 
     if (argc == 4)
     {
@@ -20,11 +20,11 @@ int main(int argc, const char *argv[] ) {
             printf("failed to set address\n");
             return 1;
         }
-        topic = argv[4];
+        channel = std::stoi(argv[4]);
     }
     else
     {
-        printf("usage: ./client [serverAddress] [port] [topic] \n");
+        printf("usage: ./client [serverAddress] [port] [channel] \n");
         printf("Server add and port not defined, using defaults \n");
     }
 
@@ -45,10 +45,10 @@ int main(int argc, const char *argv[] ) {
     // create network socket
     auto clientSocket = new SocketClient();
 
-    clientSocket->Connect(serverAddress, topic);
+    clientSocket->Connect(serverAddress);
 
-    SetTopicData message;
-    message.topic = topic;
+    SetChannel message;
+    message.channel = channel;
 
     clientSocket->Send(&message, sizeof(message));
 

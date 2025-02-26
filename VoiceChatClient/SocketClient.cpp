@@ -108,7 +108,7 @@ void SocketClient::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusCha
 
 
 
-bool SocketClient::Connect(SteamNetworkingIPAddr add, std::string topic) {
+bool SocketClient::Connect(SteamNetworkingIPAddr add) {
 
     printf("trying to connect to server....");
 

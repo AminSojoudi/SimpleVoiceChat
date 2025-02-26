@@ -5,7 +5,7 @@
 
 #include "../Common/Messages/MessageTypes.h"
 #include "../Common/Messages/AudioMessage.h"
-#include "../Common/Messages/SetTopicMessage.h"
+#include "../Common/Messages/SetChannelMessage.h"
 #include "Utils.h"
 #include <steam/isteamnetworkingutils.h>
 #include <cassert>
@@ -44,7 +44,6 @@ private:
     static ISteamNetworkingSockets* steamNetworking;
     static SteamNetworkingMicroseconds g_logTimeZero;
     static bool isConnected;
-    static std::string topic;
 
     static void InitSteamDatagramConnectionSockets();
     static void DebugOutput( ESteamNetworkingSocketsDebugOutputType eType, const char *pszMsg );
@@ -52,7 +51,7 @@ private:
 
 public:
     bool IsConnected();
-    bool Connect(SteamNetworkingIPAddr add, std::string topic);
+    bool Connect(SteamNetworkingIPAddr add);
     void PollIncomingMessages(NetworkBuffer* _voiceOutputBuffer);
     void PollConnectionStateChanges();
     void Send(const void* data, uint32 size);
