@@ -7,6 +7,7 @@ Server* Server::Instance = nullptr;
 SteamNetworkingMicroseconds Server::g_logTimeZero;
 ISteamNetworkingSockets* Server::steamNetworking;
 HSteamNetPollGroup Server::connectionPollGroup;
+std::map<int64, std::set<HSteamNetConnection>> Server::channelToConnnectionsMap;
 
 
 bool Server::StartServer(uint16 port) {
@@ -217,7 +218,7 @@ void Server::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCa
 
 void Server::PollIncomingMessages() {
     char temp[ 1024 ];
-
+    int64 channel;
     while ( 1)
     {
         ISteamNetworkingMessage *pIncomingMsg = nullptr;
@@ -240,14 +241,27 @@ void Server::PollIncomingMessages() {
 
         switch (messageType)
         {
-            case SET_TOPIC:
-                // TODO
+            case SET_CHANNEL:
+                channel = (int64)pIncomingMsg->m_pData;
+                steamNetworking->SetConnectionUserData(pIncomingMsg->m_conn, channel);
+                if (channelToConnnectionsMap.find(channel) == channelToConnnectionsMap.end()) {
+                    channelToConnnectionsMap[channel] = { pIncomingMsg->m_conn };
+                }
+                else {
+                    channelToConnnectionsMap[channel].insert(pIncomingMsg->m_conn);
+                }
                 break;
             case AUDIO:
                 printf("size of received data: %u \n", pIncomingMsg->GetSize());
-                steamNetworking->SendMessageToConnection(pIncomingMsg->m_conn, pIncomingMsg->m_pData, pIncomingMsg->GetSize(),
-                    k_nSteamNetworkingSend_ReliableNoNagle,
-                    nullptr);
+                channel = pIncomingMsg->GetConnectionUserData();
+
+                if (channelToConnnectionsMap.find(channel) != channelToConnnectionsMap.end()) {
+                    for (auto it = channelToConnnectionsMap[channel].begin(); it != channelToConnnectionsMap[channel].end(); ++it) {
+                        steamNetworking->SendMessageToConnection(*it, pIncomingMsg->m_pData, pIncomingMsg->GetSize(),
+                            k_nSteamNetworkingSend_ReliableNoNagle,
+                            nullptr);
+                    }
+                }
                 printf("Data received on server, data size = %u bytes\n", pIncomingMsg->GetSize());
                 break;
             default:

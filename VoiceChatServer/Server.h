@@ -42,7 +42,9 @@
 
 #include "../Common/Messages/MessageTypes.h"
 #include "../Common/Messages/AudioMessage.h"
-#include "../Common/Messages/SetTopicMessage.h"
+#include "../Common/Messages/SetChannelMessage.h"
+#include <map>
+#include <set>
 
 
 class Server {
@@ -51,6 +53,7 @@ private:
     static ISteamNetworkingSockets* steamNetworking;
     static SteamNetworkingMicroseconds g_logTimeZero;
     static HSteamNetPollGroup connectionPollGroup;
+    static std::map<int64, std::set<HSteamNetConnection>> channelToConnnectionsMap;
 
     static void InitSteamDatagramConnectionSockets();
     static void DebugOutput( ESteamNetworkingSocketsDebugOutputType eType, const char *pszMsg );
