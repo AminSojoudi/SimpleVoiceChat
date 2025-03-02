@@ -19,17 +19,10 @@ struct AudioData{
     int inputCurrentCounter = -1;
 
     void AddInput(AUDIO_SAMPLE sample){
-        if (inputCurrentCounter < BufferSize)
+        if (inputCurrentCounter < BufferSize - 1)
             Input[++inputCurrentCounter] = sample;
         else
             printf("buffer is full \r\n");
-    }
-    
-    bool BufferIsAlmostFull(){
-        if (inputCurrentCounter < BufferSize * 0.9) {
-            return false;
-        }
-        return true;
     }
     
     void ResetData(){
