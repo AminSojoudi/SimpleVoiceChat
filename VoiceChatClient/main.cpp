@@ -18,9 +18,10 @@ int main(int argc, const char *argv[] ) {
             serverAddress.SetIPv4(htonl(buf.s_addr), std::stoi(argv[2]));
         } else{
             printf("failed to set address\n");
+            getchar();
             return 1;
         }
-        channel = std::stoi(argv[4]);
+        channel = std::stoi(argv[3]);
     }
     else
     {
