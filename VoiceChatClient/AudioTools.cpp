@@ -49,12 +49,6 @@ int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
     if (_data == nullptr)
         return 0;
 
-    _data->sampleCounter++;
-
-    if (_data->sampleCounter > SAMPLE_RATE) {
-        _data->sampleCounter = 0;
-    }
-
     for (i = 0; i < nBufferFrames; i++)
     {
         //output[2* i] = input[i];     // loop back

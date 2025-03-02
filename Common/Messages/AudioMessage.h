@@ -16,12 +16,7 @@ typedef uint16 AUDIO_SAMPLE;
 struct AudioData{
     uint8_t type = AUDIO;
     AUDIO_SAMPLE Input[BufferSize];
-    int sampleCounter;
     int inputCurrentCounter = -1;
-
-    AudioData(){
-        sampleCounter = -1;
-    }
 
     void AddInput(AUDIO_SAMPLE sample){
         if (inputCurrentCounter < BufferSize)
