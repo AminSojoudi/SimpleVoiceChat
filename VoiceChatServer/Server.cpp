@@ -218,6 +218,7 @@ void Server::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCa
 
 void Server::PollIncomingMessages() {
     char temp[ 1024 ];
+    SetChannel* setChannel;
     int64 channel;
     while ( 1)
     {
@@ -236,33 +237,38 @@ void Server::PollIncomingMessages() {
 
         uint8_t messageType = ((uint8_t*)pIncomingMsg->m_pData)[0];
 
-        printf("message type is %d \n", messageType);
+        //printf("message type is %d \n", messageType);
 
 
         switch (messageType)
         {
             case SET_CHANNEL:
-                channel = (int64)pIncomingMsg->m_pData;
-                steamNetworking->SetConnectionUserData(pIncomingMsg->m_conn, channel);
-                if (channelToConnnectionsMap.find(channel) == channelToConnnectionsMap.end()) {
-                    channelToConnnectionsMap[channel] = { pIncomingMsg->m_conn };
+                setChannel = (SetChannel*) pIncomingMsg->m_pData;
+                steamNetworking->SetConnectionUserData(pIncomingMsg->m_conn, setChannel->channel);
+                if (channelToConnnectionsMap.find(setChannel->channel) == channelToConnnectionsMap.end()) {
+                    channelToConnnectionsMap[setChannel->channel] = { pIncomingMsg->m_conn };
                 }
                 else {
-                    channelToConnnectionsMap[channel].insert(pIncomingMsg->m_conn);
+                    channelToConnnectionsMap[setChannel->channel].insert(pIncomingMsg->m_conn);
                 }
+                printf("set channel received %d \n", setChannel->channel);
                 break;
             case AUDIO:
                 printf("size of received data: %u \n", pIncomingMsg->GetSize());
                 channel = pIncomingMsg->GetConnectionUserData();
-
+                //printf("total connections %d \n", channelToConnnectionsMap[channel].size());
                 if (channelToConnnectionsMap.find(channel) != channelToConnnectionsMap.end()) {
                     for (auto it = channelToConnnectionsMap[channel].begin(); it != channelToConnnectionsMap[channel].end(); ++it) {
+                        if (*it == pIncomingMsg->m_conn)
+                        {
+                            continue;
+                        }
                         steamNetworking->SendMessageToConnection(*it, pIncomingMsg->m_pData, pIncomingMsg->GetSize(),
                             k_nSteamNetworkingSend_ReliableNoNagle,
                             nullptr);
                     }
                 }
-                printf("Data received on server, data size = %u bytes\n", pIncomingMsg->GetSize());
+                printf("Data received on server, data size = %u bytes \n", pIncomingMsg->GetSize());
                 break;
             default:
                 break;
