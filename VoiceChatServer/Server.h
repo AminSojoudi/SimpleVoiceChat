@@ -66,6 +66,9 @@ public:
     bool  StartServer(uint16 port);
     void PollIncomingMessages();
     void PollConnectionStateChanges();
+    uint16 GetSentBytes();
+    uint16 GetRecievedBytes();
+    bool ResetCounters();
     ~Server();
 };
 
