@@ -50,6 +50,8 @@
 class Server {
 private:
     HSteamListenSocket socket;
+    uint16 sentBytesCount;
+    uint16 receivedBytesCount;
     static ISteamNetworkingSockets* steamNetworking;
     static SteamNetworkingMicroseconds g_logTimeZero;
     static HSteamNetPollGroup connectionPollGroup;

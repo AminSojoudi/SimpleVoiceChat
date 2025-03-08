@@ -220,6 +220,7 @@ void Server::PollIncomingMessages() {
     char temp[ 1024 ];
     SetChannel* setChannel;
     int64 channel;
+    ResetCounters();
     while ( 1)
     {
         ISteamNetworkingMessage *pIncomingMsg = nullptr;
@@ -236,6 +237,7 @@ void Server::PollIncomingMessages() {
         }
 
         uint8_t messageType = ((uint8_t*)pIncomingMsg->m_pData)[0];
+        receivedBytesCount += pIncomingMsg->GetSize();
 
         //printf("message type is %d \n", messageType);
 
@@ -251,10 +253,10 @@ void Server::PollIncomingMessages() {
                 else {
                     channelToConnnectionsMap[setChannel->channel].insert(pIncomingMsg->m_conn);
                 }
-                printf("set channel received %d \n", setChannel->channel);
+                printf("\r set channel received %d", setChannel->channel);
                 break;
             case AUDIO:
-                printf("size of received data: %u \n", pIncomingMsg->GetSize());
+                //printf("size of received data: %u \n", pIncomingMsg->GetSize());
                 channel = pIncomingMsg->GetConnectionUserData();
                 //printf("total connections %d \n", channelToConnnectionsMap[channel].size());
                 if (channelToConnnectionsMap.find(channel) != channelToConnnectionsMap.end()) {
@@ -266,9 +268,10 @@ void Server::PollIncomingMessages() {
                         steamNetworking->SendMessageToConnection(*it, pIncomingMsg->m_pData, pIncomingMsg->GetSize(),
                             k_nSteamNetworkingSend_ReliableNoNagle,
                             nullptr);
+                        sentBytesCount += pIncomingMsg->GetSize();
                     }
                 }
-                printf("Data received on server, data size = %u bytes \n", pIncomingMsg->GetSize());
+                //printf("\r Data received on server, data size = %u bytes", pIncomingMsg->GetSize());
                 break;
             default:
                 break;
@@ -283,4 +286,21 @@ void Server::PollIncomingMessages() {
 
 void Server::PollConnectionStateChanges() {
     steamNetworking->RunCallbacks();
+}
+
+uint16 Server::GetSentBytes()
+{
+    return sentBytesCount * 8 / 1024;
+}
+
+uint16 Server::GetRecievedBytes()
+{
+    return receivedBytesCount * 8 / 1024;
+}
+
+bool Server::ResetCounters()
+{
+    sentBytesCount = 0;
+    receivedBytesCount = 0;
+    return true;
 }

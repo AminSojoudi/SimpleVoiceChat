@@ -30,6 +30,7 @@ int main(int argc, const char *argv[] )
 
         server->PollIncomingMessages();
         server->PollConnectionStateChanges();
+        printf("\r Total Received: %d Kb  Total Sent: %d Kb", server->GetRecievedBytes(), server->GetSentBytes());
 
         std::this_thread::sleep_for( std::chrono::milliseconds( 30 ) );
     }
