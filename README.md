@@ -15,6 +15,6 @@ Simple C++ UDP based Voice Chat Application using Valve [Game Network Sockets](h
 - [X] Automate Builds
 - [ ] Add log Level functionality to server and client
 - [ ] improve resiliency to different network bandwidths and network changes
-- [ ] Calculate bandwith usage
+- [X] Calculate bandwith usage
 - [ ] Optimise bandwith
 - [ ] Add some terminal voice visualization to client
