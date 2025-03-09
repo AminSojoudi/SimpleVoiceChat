@@ -41,7 +41,7 @@ FROM debian:latest
 WORKDIR /app
 
 # Copy only the compiled binary from the build stage
-COPY --from=build /app/VoiceChatServer/build /app/
+COPY --from=build /app/build /app/
 
 RUN echo $(ls) && pwd
 
