@@ -4,13 +4,23 @@
 # SimpeVoiceChat
 Simple C++ UDP based Voice Chat Application using Valve [Game Network Sockets](https://github.com/ValveSoftware/GameNetworkingSockets) and [RTAudio](https://github.com/thestk/rtaudio)
 
+# Quick Start
+
+- Build and run the server using Docker
+
+        docker build -t voice-chat-server .
+        docker run -p 27020:27020/udp voice-chat-server
+
+- Build and run the client to connect to the server
+
+
 # TODO
 - [X] Make Client Multiplatform
 - [X] Separate Network thread from Audio thread
 - [ ] Improve Client/Server connection handling with proper logs
 - [ ] Check Projects for memory leaks and consumption
 - [X] improve architecture
-- [ ] Dockerize Server and push to DockerHub
+- [X] Dockerize Server and push to DockerHub
 - [ ] Make Releases for Client in Github
 - [X] Automate Builds
 - [ ] Add log Level functionality to server and client

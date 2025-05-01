@@ -22,7 +22,6 @@
 #include <Winsock2.h>
 #include <Ws2tcpip.h>
 #include <string>
-#include <csignal>
 #else
 #include <arpa/inet.h>
 #endif
@@ -34,6 +33,7 @@
 #include <cassert>
 #include <thread>
 #include "queue"
+#include <csignal>
 
 #ifndef STEAMNETWORKINGSOCKETS_OPENSOURCE
 #include <steam/steam_api.h>
