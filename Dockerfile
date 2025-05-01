@@ -1,52 +1,53 @@
-FROM debian:latest AS build
+# Build stage
+FROM ubuntu:22.04 AS build
 
-# Install required system dependencies
-RUN apt-get update && apt-get install -y \
-    cmake g++ git curl zip tar unzip make ninja-build pkg-config
-
-# Set the working directory
 WORKDIR /app
 
-# Clone and set up vcpkg
-RUN git clone https://github.com/Microsoft/vcpkg.git /opt/vcpkg
-RUN bash /opt/vcpkg/bootstrap-vcpkg.sh
+# Install required build tools and dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    cmake \
+    g++ \
+    curl \
+    zip \
+    unzip \
+    tar \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set vcpkg environment variables
+# Install vcpkg
+RUN git clone https://github.com/Microsoft/vcpkg.git /opt/vcpkg
+RUN /opt/vcpkg/bootstrap-vcpkg.sh
 ENV VCPKG_ROOT=/opt/vcpkg
 ENV PATH="${VCPKG_ROOT}:${PATH}"
 
-# Copy project files
-COPY /VoiceChatServer /app/VoiceChatServer
-COPY /Common /app/Common
+# Install dependencies
+RUN vcpkg install gamenetworkingsockets:x64-linux
 
+# Copy source code
+COPY . .
 
-# Install dependencies using vcpkg manifest mode
-RUN cd VoiceChatServer && /opt/vcpkg/vcpkg install --triplet x64-linux
+# Build the project
+WORKDIR /app/VoiceChatServer
+RUN cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake
+RUN cmake --build build --config Release
 
-# Configure and build
-RUN cmake -B build -S VoiceChatServer  \
-    -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake \
-    -DCMAKE_BUILD_TYPE=Release \
-    && cmake --build build
+# Runtime stage
+FROM ubuntu:22.04 AS runtime
 
-RUN echo $(ls) && pwd
-
-# Remove not used folders
-RUN rm -rf /app/VoiceChatServer/build/vcpkg_installed
-
-
-FROM debian:latest
-
-# Set work directory
 WORKDIR /app
 
-# Copy only the compiled binary from the build stage
-COPY --from=build /app/build /app/
+# Copy the built binary and required libraries
+COPY --from=build /app/VoiceChatServer/build/VoiceChatServer /app/
+COPY --from=build /opt/vcpkg/installed/x64-linux/lib/libGameNetworkingSockets.so /usr/lib/
 
-RUN echo $(ls) && pwd
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    libssl3 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Expose UDP port
-EXPOSE 27020/udp
+# Expose the port the server will listen on
+EXPOSE 27020
 
-# Run the serverl
+# Run the server
 CMD ["./VoiceChatServer"]
