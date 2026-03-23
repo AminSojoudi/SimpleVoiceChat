@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Build libVoiceChatClientPlugin.so for Unity (Android). Requires: Ninja, CMake, VCPKG_ROOT, ANDROID_NDK_HOME.
+set -euo pipefail
+
+ABI="${1:-arm64-v8a}"
+case "$ABI" in
+  arm64-v8a)    TRIPLET=arm64-android ;;
+  armeabi-v7a)  TRIPLET=arm-neon-android ;;
+  x86_64)       TRIPLET=x64-android ;;
+  *) echo "Usage: $0 [arm64-v8a|armeabi-v7a|x86_64]"; exit 1 ;;
+esac
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLIENT_DIR="$(dirname "$SCRIPT_DIR")"
+
+: "${VCPKG_ROOT:?Set VCPKG_ROOT}"
+: "${ANDROID_NDK_HOME:?Set ANDROID_NDK_HOME}"
+
+BUILD_DIR="$CLIENT_DIR/build-android-$ABI"
+TOOLCHAIN="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+
+cmake -B "$BUILD_DIR" -S "$CLIENT_DIR" -G Ninja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN" \
+  -DVCPKG_TARGET_TRIPLET="$TRIPLET" \
+  -DANDROID_ABI="$ABI" \
+  -DANDROID_PLATFORM=android-24
+
+cmake --build "$BUILD_DIR" --config Release --target VoiceChatClientPlugin
+
+echo "Built VoiceChatClientPlugin for $ABI."

@@ -4,6 +4,28 @@
 
 #include "SocketClient.h"
 
+#include <algorithm>
+#include <atomic>
+
+#ifdef STEAMNETWORKINGSOCKETS_OPENSOURCE
+static std::atomic<int> s_gnsLibRefs{0};
+
+static void GnsLibAddRef() {
+    if (s_gnsLibRefs.fetch_add(1, std::memory_order_acq_rel) == 0) {
+        SteamDatagramErrMsg errMsg;
+        if (!GameNetworkingSockets_Init(nullptr, errMsg))
+            printf("GameNetworkingSockets_Init failed.  %s\n", errMsg);
+    }
+}
+
+static void GnsLibRelease() {
+    const int prev = s_gnsLibRefs.fetch_sub(1, std::memory_order_acq_rel);
+    if (prev == 1) {
+        GameNetworkingSockets_Kill();
+    }
+}
+#endif
+
 SteamNetworkingMicroseconds SocketClient::g_logTimeZero;
 HSteamNetConnection SocketClient::connection;
 ISteamNetworkingSockets* SocketClient::steamNetworking;
@@ -12,9 +34,7 @@ bool SocketClient::isConnected = false;
 
 void SocketClient::InitSteamDatagramConnectionSockets() {
 #ifdef STEAMNETWORKINGSOCKETS_OPENSOURCE
-    SteamDatagramErrMsg errMsg;
-    if ( !GameNetworkingSockets_Init( nullptr, errMsg ) )
-        printf( "GameNetworkingSockets_Init failed.  %s", errMsg );
+    GnsLibAddRef();
 #else
     SteamDatagram_SetAppID( 570 ); // Just set something, doesn't matter what
 		SteamDatagram_SetUniverse( false, k_EUniverseDev );
@@ -127,54 +147,58 @@ bool SocketClient::Connect(SteamNetworkingIPAddr add) {
     return true;
 }
 
-int receiveCounter = 0;
+#if defined(VOICECHAT_VERBOSE)
+static int s_receiveCounter = 0;
+#endif
+
 void SocketClient::PollIncomingMessages(NetworkBuffer* _voiceAudioBuffer)
 {
-    if (connection == k_HSteamNetConnection_Invalid){
+    if (connection == k_HSteamNetConnection_Invalid) {
+#if defined(VOICECHAT_VERBOSE)
         printf("connection is invalid \n");
+#endif
         return;
     }
 
-    while ( 1 )
-    {
-        ISteamNetworkingMessage *pIncomingMsg = nullptr;
-        int numMsgs = steamNetworking->ReceiveMessagesOnConnection(connection, &pIncomingMsg, 1 );
-        if ( numMsgs == 0 )
+    while (true) {
+        ISteamNetworkingMessage* pIncomingMsg = nullptr;
+        const int numMsgs = steamNetworking->ReceiveMessagesOnConnection(connection, &pIncomingMsg, 1);
+        if (numMsgs == 0)
             break;
-        if (numMsgs == -1)
-        {
+        if (numMsgs < 0) {
+#if defined(VOICECHAT_VERBOSE)
             printf("connection handle is invalid \n");
+#endif
             break;
         }
 
-
         auto* audioData = static_cast<AudioData*>(pIncomingMsg->m_pData);
         if (!audioData) {
-            // Handle the case where the cast failed
             pIncomingMsg->Release();
             continue;
         }
 
-        printf("received data from server, size: %u \n", audioData->inputCurrentCounter);
-
-        printf("receive counter is %d \n", ++receiveCounter);
+#if defined(VOICECHAT_VERBOSE)
+        printf("received data from server, size: %u \n", (unsigned)audioData->inputCurrentCounter);
+        printf("receive counter is %d \n", ++s_receiveCounter);
+#endif
         if (pIncomingMsg->GetSize() == 0) {
             pIncomingMsg->Release();
             continue;
         }
-        //_voiceAudioBuffer->ResetData();
 
-        // Playback
-        const size_t buffer_size = audioData->inputCurrentCounter;
-        for (size_t i = 0; i < buffer_size; ++i) {
+        constexpr int kAudioInputCapacity = 1024;
+        const int lastIdx = audioData->inputCurrentCounter;
+        if (lastIdx < 0) {
+            pIncomingMsg->Release();
+            continue;
+        }
+        const int nSamples = (std::min)(lastIdx + 1, kAudioInputCapacity);
+        for (int i = 0; i < nSamples; ++i) {
             if (audioData->Input[i] != 0)
                 _voiceAudioBuffer->AddInput(audioData->Input[i]);
-            // Only enable this part for debugging, any action here causes delays on the voice
-            //printf("%d," , audioData->Input[i]);
         }
-        printf("\n");
 
-        // We don't need this anymore.
         pIncomingMsg->Release();
     }
 }
@@ -185,19 +209,28 @@ void SocketClient::PollConnectionStateChanges()
 }
 
 SocketClient::SocketClient() {
-    // Create client and server sockets
     InitSteamDatagramConnectionSockets();
     steamNetworking = SteamNetworkingSockets();
 }
 
 SocketClient::~SocketClient() {
+    if (steamNetworking && connection != k_HSteamNetConnection_Invalid) {
+        steamNetworking->CloseConnection(connection, 0, nullptr, false);
+        connection = k_HSteamNetConnection_Invalid;
+        isConnected = false;
+    }
     steamNetworking = nullptr;
+#ifdef STEAMNETWORKINGSOCKETS_OPENSOURCE
+    GnsLibRelease();
+#endif
 }
 
 
 void SocketClient::Send(const void *data, uint32 size) {
+    if (!steamNetworking || connection == k_HSteamNetConnection_Invalid || !data || size == 0)
+        return;
 
-    steamNetworking->SendMessageToConnection(connection, data,size,
+    steamNetworking->SendMessageToConnection(connection, data, size,
                                              k_nSteamNetworkingSend_ReliableNoNagle,
                                              nullptr);
 }

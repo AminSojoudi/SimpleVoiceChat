@@ -48,6 +48,27 @@ ReRunCMake.make
 CMakeCache.txt
 cmake_install.cmake
 VoiceChatClient/build
+build-verify/
+
+# Unity generated files
+UnityVoiceChatClient/Library/
+UnityVoiceChatClient/Logs/
+UnityVoiceChatClient/obj/
+UnityVoiceChatClient/Temp/
+UnityVoiceChatClient/Build/
+UnityVoiceChatClient/Builds/
+UnityVoiceChatClient/MemoryCaptures/
+UnityVoiceChatClient/UserSettings/
+UnityVoiceChatClient/*.csproj
+UnityVoiceChatClient/*.sln
+UnityVoiceChatClient/.vscode/
+UnityVoiceChatClient/.idea/
+UnityVoiceChatClient/.DS_Store
+UnityVoiceChatClient/Assets/Plugins/x86_64/*.dll
+UnityVoiceChatClient/Assets/Plugins/x86_64/*.pdb
+UnityVoiceChatClient/Assets/Plugins/macOS/*.dylib
+UnityVoiceChatClient/Assets/Plugins/Android/libs/**/*.so
+UnityVoiceChatClient/Assets/Plugins/iOS/*.a
 VoiceChatClient/CMakeFiles
 VoiceChatClient/Debug
 VoiceChatClient/vcpkg_installed
@@ -81,3 +102,7 @@ build/
 VoiceChatServer/Debug
 *.pbxproj
 VoiceChatServer/enc_temp_folder/
+VoiceChatClient/.idea/workspace.xml
+VoiceChatClient/.idea/VoiceChatClient.iml
+VoiceChatClient/.idea/modules.xml
+VoiceChatClient/.idea/misc.xml

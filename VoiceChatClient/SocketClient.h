@@ -7,6 +7,7 @@
 #include "../Common/Messages/AudioMessage.h"
 #include "../Common/Messages/SetChannelMessage.h"
 #include "Utils.h"
+#include <steam/steamnetworkingsockets.h>
 #include <steam/isteamnetworkingutils.h>
 #include <cassert>
 
@@ -26,6 +27,9 @@
 
 
 #if PLATFORM == PLATFORM_WINDOWS
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <Winsock2.h>
 #include <Ws2tcpip.h>
 #include <string>

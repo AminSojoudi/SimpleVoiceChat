@@ -12,3 +12,4 @@ add_executable(VoiceChatServer main.cpp
          "../Common/Messages/AudioMessage.h" "../Common/Messages/MessageTypes.h" "../Common/Messages/SetChannelMessage.h")
 
 target_link_libraries(VoiceChatServer GameNetworkingSockets::shared)
+target_compile_definitions(VoiceChatServer PRIVATE STEAMNETWORKINGSOCKETS_OPENSOURCE)
