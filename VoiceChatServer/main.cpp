@@ -24,6 +24,10 @@ int main(int argc, const char *argv[] )
         printf("port not provided, using default port 27020 \n usage: ./server [port]");
     }
 
+#ifdef VOICECHAT_PROTOCOL_VERSION_STRING
+    printf("VoiceChat protocol version: %s\n", VOICECHAT_PROTOCOL_VERSION_STRING);
+#endif
+
     bool socket_success = server->StartServer(port);
 
     while (socket_success && !shouldExit){

@@ -1,4 +1,5 @@
 #include "SocketClient.h"
+#include "VoiceChatPluginVersion.h"
 #include "Utils.h"
 #include "../Common/Messages/AudioMessage.h"
 #include "../Common/Messages/SetChannelMessage.h"
@@ -15,6 +16,10 @@
 static SocketClient* g_client = nullptr;
 static NetworkBuffer g_outputBuffer;
 static bool g_initialized = false;
+
+EXPORT_API const char* VC_GetVersionString(void) {
+    return VOICECHAT_PLUGIN_VERSION_STRING;
+}
 
 EXPORT_API bool VC_Init() {
     if (g_initialized) return true;

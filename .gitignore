@@ -11,11 +11,6 @@
 *.gch
 *.pch
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
 # Fortran module files
 *.mod
 *.smod
@@ -49,6 +44,7 @@ CMakeCache.txt
 cmake_install.cmake
 VoiceChatClient/build
 build-verify/
+VoiceChatClient/build-all/
 
 # Unity generated files
 UnityVoiceChatClient/Library/
@@ -64,11 +60,13 @@ UnityVoiceChatClient/*.sln
 UnityVoiceChatClient/.vscode/
 UnityVoiceChatClient/.idea/
 UnityVoiceChatClient/.DS_Store
-UnityVoiceChatClient/Assets/Plugins/x86_64/*.dll
-UnityVoiceChatClient/Assets/Plugins/x86_64/*.pdb
-UnityVoiceChatClient/Assets/Plugins/macOS/*.dylib
-UnityVoiceChatClient/Assets/Plugins/Android/libs/**/*.so
-UnityVoiceChatClient/Assets/Plugins/iOS/*.a
+# VoiceChat native outputs only (other Assets/Plugins/* binaries can be committed)
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.dll
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.pdb
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.so
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.dylib
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.a
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/VoiceChatPluginVersion.txt
 VoiceChatClient/CMakeFiles
 VoiceChatClient/Debug
 VoiceChatClient/vcpkg_installed

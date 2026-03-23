@@ -1,0 +1,164 @@
+# Build VoiceChatClientPlugin on multiple runners; upload versioned artifacts.
+#
+# What it does:
+# - read-version: reads repo root VERSION for artifact names.
+# - plugin-windows: MSVC x64 DLL + generated version header/txt.
+# - plugin-linux: Ninja + vcpkg, Linux x64 .so.
+# - plugin-macos: Ninja + vcpkg, macOS .dylib (runner native arch).
+# - plugin-android: Ninja + vcpkg + Android NDK, .so per ABI (matrix).
+#
+# iOS static (.a) is not here: needs macOS + arm64-ios vcpkg triplet and linking many static deps;
+# use VoiceChatClient/scripts/build-all.sh on a Mac (or extend this workflow later).
+#
+# Bump repository root VERSION when Common message layouts or protocol change.
+
+name: voicechat native plugins
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "VERSION"
+      - "cmake/**"
+      - "Common/**"
+      - "VoiceChatClient/**"
+      - ".github/workflows/voicechat-native-plugins.yml"
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  read-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: v
+        run: echo "version=$(tr -d ' \r\n' < VERSION)" >> "$GITHUB_OUTPUT"
+
+  plugin-windows:
+    needs: read-version
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bootstrap vcpkg
+        run: |
+          git clone --depth 1 https://github.com/microsoft/vcpkg.git "${{ runner.temp }}/vcpkg"
+          "${{ runner.temp }}/vcpkg/bootstrap-vcpkg.bat"
+      - name: Configure & build
+        shell: bash
+        run: |
+          cmake -B VoiceChatClient/build-ci -S VoiceChatClient \
+            -G "Visual Studio 17 2022" -A x64 \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DCMAKE_TOOLCHAIN_FILE="${{ runner.temp }}/vcpkg/scripts/buildsystems/vcpkg.cmake" \
+            -DVOICECHAT_COPY_PLUGIN_TO_UNITY=OFF
+          cmake --build VoiceChatClient/build-ci --config Release --target VoiceChatClientPlugin
+      - uses: actions/upload-artifact@v4
+        with:
+          name: voicechat-plugin-windows-x64-v${{ needs.read-version.outputs.version }}
+          path: |
+            VoiceChatClient/build-ci/Release/VoiceChatClientPlugin.dll
+            VoiceChatClient/build-ci/generated/VoiceChatPluginVersion.h
+            VoiceChatClient/build-ci/VoiceChatPluginVersion.txt
+
+  plugin-linux:
+    needs: read-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Bootstrap vcpkg
+        run: |
+          git clone --depth 1 https://github.com/microsoft/vcpkg.git "$RUNNER_TEMP/vcpkg"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh"
+      - name: Configure & build
+        run: |
+          cmake -B VoiceChatClient/build-ci -S VoiceChatClient \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DCMAKE_TOOLCHAIN_FILE="$RUNNER_TEMP/vcpkg/scripts/buildsystems/vcpkg.cmake" \
+            -DVOICECHAT_COPY_PLUGIN_TO_UNITY=OFF
+          cmake --build VoiceChatClient/build-ci --target VoiceChatClientPlugin
+      - uses: actions/upload-artifact@v4
+        with:
+          name: voicechat-plugin-linux-x64-v${{ needs.read-version.outputs.version }}
+          path: |
+            VoiceChatClient/build-ci/libVoiceChatClientPlugin.so
+            VoiceChatClient/build-ci/generated/VoiceChatPluginVersion.h
+            VoiceChatClient/build-ci/VoiceChatPluginVersion.txt
+
+  plugin-macos:
+    needs: read-version
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bootstrap vcpkg
+        run: |
+          git clone --depth 1 https://github.com/microsoft/vcpkg.git "$RUNNER_TEMP/vcpkg"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh"
+      - name: Configure & build (host arch)
+        run: |
+          ARCH="$(uname -m)"
+          cmake -B VoiceChatClient/build-ci -S VoiceChatClient \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DCMAKE_TOOLCHAIN_FILE="$RUNNER_TEMP/vcpkg/scripts/buildsystems/vcpkg.cmake" \
+            -DCMAKE_OSX_ARCHITECTURES="$ARCH" \
+            -DVOICECHAT_COPY_PLUGIN_TO_UNITY=OFF
+          cmake --build VoiceChatClient/build-ci --target VoiceChatClientPlugin
+      - uses: actions/upload-artifact@v4
+        with:
+          name: voicechat-plugin-macos-${{ runner.arch }}-v${{ needs.read-version.outputs.version }}
+          path: |
+            VoiceChatClient/build-ci/libVoiceChatClientPlugin.dylib
+            VoiceChatClient/build-ci/generated/VoiceChatPluginVersion.h
+            VoiceChatClient/build-ci/VoiceChatPluginVersion.txt
+
+  plugin-android:
+    needs: read-version
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - abi: arm64-v8a
+            triplet: arm64-android
+          - abi: armeabi-v7a
+            triplet: arm-neon-android
+          - abi: x86_64
+            triplet: x64-android
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - uses: nttld/setup-ndk@v1
+        id: ndk
+        with:
+          ndk-version: r26b
+          add-to-path: false
+      - name: Bootstrap vcpkg
+        run: |
+          git clone --depth 1 https://github.com/microsoft/vcpkg.git "$RUNNER_TEMP/vcpkg"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh"
+      - name: Configure & build
+        env:
+          ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
+        run: |
+          cmake -B VoiceChatClient/build-ci -S VoiceChatClient \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DCMAKE_TOOLCHAIN_FILE="$RUNNER_TEMP/vcpkg/scripts/buildsystems/vcpkg.cmake" \
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }} \
+            -DANDROID_ABI=${{ matrix.abi }} \
+            -DANDROID_PLATFORM=android-24 \
+            -DVOICECHAT_COPY_PLUGIN_TO_UNITY=OFF
+          cmake --build VoiceChatClient/build-ci --target VoiceChatClientPlugin
+      - uses: actions/upload-artifact@v4
+        with:
+          name: voicechat-plugin-android-${{ matrix.abi }}-v${{ needs.read-version.outputs.version }}
+          path: |
+            VoiceChatClient/build-ci/libVoiceChatClientPlugin.so
+            VoiceChatClient/build-ci/generated/VoiceChatPluginVersion.h
+            VoiceChatClient/build-ci/VoiceChatPluginVersion.txt

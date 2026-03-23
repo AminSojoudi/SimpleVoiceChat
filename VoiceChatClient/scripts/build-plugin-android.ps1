@@ -1,7 +1,8 @@
 # Build libVoiceChatClientPlugin.so for Unity (Android). Requires: Ninja, CMake, VCPKG_ROOT, ANDROID_NDK_HOME.
 param(
     [ValidateSet("arm64-v8a", "armeabi-v7a", "x86_64")]
-    [string]$Abi = "arm64-v8a"
+    [string]$Abi = "arm64-v8a",
+    [switch]$NoUnityCopy
 )
 
 $ErrorActionPreference = "Stop"
@@ -14,7 +15,7 @@ if (-not $VcpkgRoot) {
 }
 $Ndk = $env:ANDROID_NDK_HOME
 if (-not $Ndk) {
-    Write-Error "Set ANDROID_NDK_HOME to your Android NDK root (e.g. .../Android/Sdk/ndk/26.1.10909125)."
+    Write-Error "Set ANDROID_NDK_HOME to your Android NDK path (e.g. .../Android/Sdk/ndk/26.1.10909125)."
 }
 
 $triplets = @{
@@ -28,14 +29,16 @@ $env:ANDROID_NDK_HOME = $Ndk
 
 $BuildDir = Join-Path $ClientDir "build-android-$Abi"
 $VcpkgToolchain = Join-Path $VcpkgRoot "scripts/buildsystems/vcpkg.cmake"
+$CopyFlag = if ($NoUnityCopy) { "OFF" } else { "ON" }
 
 & cmake -B $BuildDir -S $ClientDir -G Ninja `
     -DCMAKE_BUILD_TYPE=Release `
     "-DCMAKE_TOOLCHAIN_FILE=$VcpkgToolchain" `
     "-DVCPKG_TARGET_TRIPLET=$triplet" `
     "-DANDROID_ABI=$Abi" `
-    "-DANDROID_PLATFORM=android-24"
+    "-DANDROID_PLATFORM=android-24" `
+    "-DVOICECHAT_COPY_PLUGIN_TO_UNITY=$CopyFlag"
 
 & cmake --build $BuildDir --config Release --target VoiceChatClientPlugin
 
-Write-Host "Built VoiceChatClientPlugin for $Abi. Output copied by CMake to UnityVoiceChatClient/Assets/Plugins/Android/libs/$Abi/ (if VOICECHAT_COPY_PLUGIN_TO_UNITY is ON)."
+Write-Host "Built VoiceChatClientPlugin for $Abi (VOICECHAT_COPY_PLUGIN_TO_UNITY=$CopyFlag)."

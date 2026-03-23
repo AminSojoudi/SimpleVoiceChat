@@ -1,20 +1,129 @@
 
 [![Windows CI](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-windows-platform.yml/badge.svg?branch=main)](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-windows-platform.yml)
 [![Ubuntu CI](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-ubuntu-platform.yml/badge.svg?branch=main)](https://github.com/AminSojoudi/SimpeVoiceChat/actions/workflows/cmake-ubuntu-platform.yml)
+
 # SimpeVoiceChat
-Simple C++ UDP based Voice Chat Application using Valve [Game Network Sockets](https://github.com/ValveSoftware/GameNetworkingSockets) and [RTAudio](https://github.com/thestk/rtaudio)
 
-# Quick Start
+Simple C++ UDP voice chat using Valve [GameNetworkingSockets](https://github.com/ValveSoftware/GameNetworkingSockets) and [RtAudio](https://github.com/thestk/rtaudio) for the desktop CLI client. The **Unity** player loads a small native plugin (`VoiceChatClientPlugin`) that uses the same protocol as the server.
 
-- Build and run the server using Docker
+---
 
-        docker build -t voice-chat-server .
-        docker run -p 27020:27020/udp voice-chat-server
+## Quick start (server)
 
-- Build and run the client to connect to the server
+Build and run the server with Docker:
 
+```bash
+docker build -t voice-chat-server .
+docker run -p 27020:27020/udp voice-chat-server
+```
+
+---
+
+## Protocol and version
+
+- **Single source of truth:** repository root [`VERSION`](VERSION) (semantic version, e.g. `1.0.0`).
+- Bump **`VERSION`** when you change **`Common/`** message layouts or anything that must stay in sync between **server**, **native plugin**, and **Unity**.
+- The native plugin exposes **`VC_GetVersionString()`**; C# can read **`VoiceChatUnityClient.NativePluginVersion`**.
+- The server prints **`VoiceChat protocol version: …`** on startup (from the same `VERSION` at compile time).
+- After a local plugin build with Unity copy enabled, **`UnityVoiceChatClient/Assets/Plugins/VoiceChat/VoiceChatPluginVersion.txt`** is updated (gitignored).
+
+---
+
+## Unity native plugin layout (`Assets/Plugins/VoiceChat`)
+
+All VoiceChat binaries and their Windows vcpkg **runtime DLLs** are placed under **`VoiceChat/`** so they do not mix with other native plugins and so **only this subtree is gitignored** for `.dll` / `.so` / etc. Put **other** third-party plugins directly under **`Assets/Plugins/`** (or your usual folders); those files are **not** ignored by this repo’s rules.
+
+| Platform | Unity folder |
+|----------|----------------|
+| Windows (x64 Editor / standalone) | `Plugins/VoiceChat/Windows/x86_64/` — `VoiceChatClientPlugin.dll` + vcpkg DLLs (OpenSSL, protobuf, Abseil, GameNetworkingSockets, …) |
+| Linux | `Plugins/VoiceChat/Linux/x86_64/` — `libVoiceChatClientPlugin.so` |
+| macOS | `Plugins/VoiceChat/macOS/` — `libVoiceChatClientPlugin.dylib` |
+| Android | `Plugins/VoiceChat/Android/libs/<abi>/` — `libVoiceChatClientPlugin.so` |
+| iOS | `Plugins/VoiceChat/iOS/` — static `.a` (you must also link GNS/OpenSSL/protobuf/Abseil; see scripts) |
+
+Android permissions for this plugin are declared in **`Plugins/VoiceChat/Android/AndroidManifest.xml`** (merged by Unity).
+
+Override the install root in CMake with **`UNITY_VOICECHAT_PLUGINS`** if needed.
+
+---
+
+## Building the Unity native plugin
+
+### Prerequisites (Windows — Windows + Android)
+
+- **Visual Studio 2022** with **Desktop development with C++**
+- **CMake**
+- **Ninja** (required for Android configures), e.g. `winget install Ninja-build.Ninja`
+- **vcpkg:** clone, run `bootstrap-vcpkg.bat`, set **`VCPKG_ROOT`**
+- **Android NDK** (for `.so`): set **`ANDROID_NDK_HOME`** to the NDK root (directory that contains `build/cmake/android.toolchain.cmake`)
+
+### One command (Windows: DLL + all Android ABIs)
+
+From PowerShell:
+
+```powershell
+$env:VCPKG_ROOT = "C:\path\to\vcpkg"
+$env:ANDROID_NDK_HOME = "C:\path\to\Android\Sdk\ndk\<version>"
+cd SimpleVoiceChat\VoiceChatClient\scripts
+.\build-all.ps1
+```
+
+This configures **`VOICECHAT_COPY_PLUGIN_TO_UNITY=ON`** by default and copies outputs into **`UnityVoiceChatClient/Assets/Plugins/VoiceChat/...`**.
+
+- **`-NoUnityCopy`** — build only under `VoiceChatClient/build-all/` / `build-android-*` (no Unity tree updates).
+- **`-SkipWindows`** / **`-SkipAndroid`** — build only one side.
+
+### Android only (one ABI)
+
+```powershell
+.\build-plugin-android.ps1 -Abi arm64-v8a
+```
+
+### macOS / Linux / iOS
+
+On a Mac or Linux host:
+
+```bash
+export VCPKG_ROOT=/path/to/vcpkg
+export ANDROID_NDK_HOME=/path/to/ndk   # optional, for Android from Unix
+cd VoiceChatClient/scripts
+chmod +x build-all.sh
+./build-all.sh
+```
+
+`./build-all.sh --no-unity-copy` disables copying into Unity. **`--android-only`** builds only Android ABIs.
+
+### vcpkg runtime DLLs (Windows)
+
+After the plugin DLL is copied into **`Plugins/VoiceChat/Windows/x86_64/`**, CMake runs vcpkg’s **`applocal.ps1`** so dependent DLLs from **`vcpkg_installed/<triplet>/bin`** (or **`debug/bin`** for Debug) are copied **next to** `VoiceChatClientPlugin.dll`. **`VCPKG_ROOT`** must be set at build time.
+
+Requires **PowerShell** or **pwsh** on `PATH`. If deploy fails, copy DLLs manually from your build tree’s `vcpkg_installed\x64-windows\bin` into the same Unity folder as the plugin.
+
+Android/Linux/macOS generally do not use this step (dependencies are resolved differently); if an Android build misses `.so` dependencies, add them under the same `libs/<abi>` folder or link statically.
+
+### Packaging
+
+```powershell
+cd VoiceChatClient\scripts
+.\package-unity-plugins.ps1
+```
+
+Creates **`VoiceChatClient/dist/VoiceChatUnityPlugins-v<VERSION>.zip`** from **`Assets/Plugins/VoiceChat/`**.
+
+### CI
+
+Workflow **[`.github/workflows/voicechat-native-plugins.yml`](.github/workflows/voicechat-native-plugins.yml)** builds the plugin on Windows, Linux, macOS, and Android matrix runners and uploads versioned artifacts (no Unity tree in CI).
+
+---
+
+## Desktop CLI client
+
+Configure **`VoiceChatClient`** with the vcpkg toolchain (manifest mode uses [`VoiceChatClient/vcpkg.json`](VoiceChatClient/vcpkg.json)), build **`VoiceChatClient`** and run against the server address/port/channel.
+
+---
 
 # TODO
+
 - [X] Make Client Multiplatform
 - [X] Separate Network thread from Audio thread
 - [ ] Improve Client/Server connection handling with proper logs

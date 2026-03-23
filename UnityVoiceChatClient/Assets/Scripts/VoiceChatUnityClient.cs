@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -7,7 +8,7 @@ using UnityEngine.Android;
 
 /// <summary>
 /// Native voice chat client (GameNetworkingSockets). Place on a GameObject with an AudioSource; add an AudioListener in the scene for playback via OnAudioFilterRead.
-/// Windows: VoiceChatClientPlugin.dll in Assets/Plugins/x86_64 (or ARM64). Android: libVoiceChatClientPlugin.so per ABI. iOS: link libVoiceChatClientPlugin.a and GNS/OpenSSL/protobuf static libs with DllImport("__Internal").
+/// Native binaries live under Assets/Plugins/VoiceChat/ (Windows/x86_64, Android/libs per ABI, macOS, iOS). Windows builds copy vcpkg runtime DLLs next to the plugin. iOS: link libVoiceChatClientPlugin.a plus GNS/OpenSSL/protobuf static libs; DllImport("__Internal").
 /// </summary>
 public class VoiceChatUnityClient : MonoBehaviour {
 #if UNITY_IOS && !UNITY_EDITOR
@@ -33,6 +34,24 @@ public class VoiceChatUnityClient : MonoBehaviour {
 
     [DllImport(PluginName)]
     private static extern void VC_Shutdown();
+
+    [DllImport(PluginName)]
+    private static extern IntPtr VC_GetVersionString();
+
+    /// <summary>Protocol / native plugin version embedded at build time (repository root VERSION). Empty if the native plugin is missing.</summary>
+    public static string NativePluginVersion {
+        get {
+            try {
+                IntPtr p = VC_GetVersionString();
+                if (p == IntPtr.Zero) return string.Empty;
+                return Marshal.PtrToStringAnsi(p) ?? string.Empty;
+            } catch (DllNotFoundException) {
+                return string.Empty;
+            } catch (EntryPointNotFoundException) {
+                return string.Empty;
+            }
+        }
+    }
 
     public string serverAddress = "192.168.1.100";
     public ushort serverPort = 27020;
