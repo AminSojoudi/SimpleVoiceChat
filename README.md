@@ -53,9 +53,10 @@ Override the install root in CMake with **`UNITY_VOICECHAT_PLUGINS`** if needed.
 
 - **Visual Studio 2022** with **Desktop development with C++**
 - **CMake**
-- **Ninja** (required for Android configures), e.g. `winget install Ninja-build.Ninja`
+- **Ninja** (required for Android configures). Either `winget install Ninja-build.Ninja`, or enable **C++ CMake tools for Windows** in Visual Studio Installer (Ninja ships under `...\CommonExtensions\Microsoft\CMake\Ninja`). The Android script prepends that folder to `PATH` when `ninja` is not already found.
 - **vcpkg:** clone, run `bootstrap-vcpkg.bat`, set **`VCPKG_ROOT`**
-- **Android NDK** (for `.so`): set **`ANDROID_NDK_HOME`** to the NDK root (directory that contains `build/cmake/android.toolchain.cmake`)
+- **Android NDK** (for `.so`): set **`ANDROID_NDK_HOME`** to the NDK root (must contain `build/cmake/android.toolchain.cmake`). **Do not use Unity’s NDK under `C:\Program Files\...`** for vcpkg builds—paths with spaces break OpenSSL. Install the NDK via **Android Studio** (default: `%LOCALAPPDATA%\Android\Sdk\ndk\<version>`) or put it under e.g. `C:\Android\ndk\<version>`. The script **`build-plugin-android.ps1`** will warn and switch to a space-free NDK under `%LOCALAPPDATA%\Android\Sdk\ndk` if it finds one.
+- **Android triplets:** vcpkg’s default `*-android` triplets use **static** libraries; **GameNetworkingSockets** must be built **shared**. This repo adds **`cmake/vcpkg-triplets/`** overlays (wired from **`VoiceChatClient/vcpkg.json`** → `vcpkg-configuration.overlay-triplets`). They also set **`VCPKG_BUILD_TYPE=release`** so OpenSSL is not built in debug on Android (the debug `make install` step often breaks on Windows + MSYS `make`). **`cmake/vcpkg-ports/gamenetworkingsockets`** is an overlay port (same `vcpkg.json` → `overlay-ports`) that patches upstream CMake so **`CMAKE_SYSTEM_NAME=Android`** is recognized. After changing triplets or ports, delete **`VoiceChatClient/build-android-*`** and reconfigure; if OpenSSL was half-installed, remove **`vcpkg/buildtrees/openssl`** or run **`vcpkg remove openssl:arm64-android`** then rebuild.
 
 ### One command (Windows: DLL + all Android ABIs)
 

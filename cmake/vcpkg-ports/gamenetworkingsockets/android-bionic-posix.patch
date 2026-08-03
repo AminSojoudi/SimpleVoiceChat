@@ -1,0 +1,25 @@
+diff --git a/src/tier0/dbg.cpp b/src/tier0/dbg.cpp
+--- a/src/tier0/dbg.cpp
++++ b/src/tier0/dbg.cpp
+@@ -56,7 +56,7 @@
+ 	size = sizeof(info);
+ 	info.kp_proc.p_flag = 0;
+ 	sysctl(mib,4,&info,&size,NULL,0);
+ 	return ((info.kp_proc.p_flag & P_TRACED) == P_TRACED);
+-#elif IsLinux()
++#elif IsLinux() || IsAndroid()
+ 	static FILE *fp;
+ 	if ( !fp )
+ 	{
+diff --git a/src/tier1/netadr.cpp b/src/tier1/netadr.cpp
+--- a/src/tier1/netadr.cpp
++++ b/src/tier1/netadr.cpp
+@@ -661,6 +661,6 @@
+ 			auto *s = (struct sockaddr_in*)addr;
+ 			s->sin_family = AF_INET;
+-			s->sin_addr.s_addr = BigDWord( INADDR_BROADCAST );
++			s->sin_addr.s_addr = BigDWord( static_cast<uint32>( INADDR_BROADCAST ) );
+ 			s->sin_port = BigWord( m_usPort );
+ 			struct_size = sizeof(sockaddr_in);
+ 		}
+

@@ -45,6 +45,7 @@ cmake_install.cmake
 VoiceChatClient/build
 build-verify/
 VoiceChatClient/build-all/
+VoiceChatClient/build-android-*
 
 # Unity generated files
 UnityVoiceChatClient/Library/
@@ -62,11 +63,19 @@ UnityVoiceChatClient/.idea/
 UnityVoiceChatClient/.DS_Store
 # VoiceChat native outputs only (other Assets/Plugins/* binaries can be committed)
 UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.dll
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.dll.meta
 UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.pdb
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.pdb.meta
 UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.so
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.so.meta
 UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.dylib
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.dylib.meta
 UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.a
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/**/*.a.meta
 UnityVoiceChatClient/Assets/Plugins/VoiceChat/VoiceChatPluginVersion.txt
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/VoiceChatPluginVersion.txt.meta
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/Android/libs/
+UnityVoiceChatClient/Assets/Plugins/VoiceChat/Android/libs.meta
 VoiceChatClient/CMakeFiles
 VoiceChatClient/Debug
 VoiceChatClient/vcpkg_installed

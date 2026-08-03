@@ -1,6 +1,17 @@
 {
   "dependencies": [
     "gamenetworkingsockets",
-    "rtaudio"
-  ]
+    {
+      "name": "rtaudio",
+      "platform": "windows | linux | osx"
+    }
+  ],
+  "vcpkg-configuration": {
+    "overlay-ports": [
+      "../cmake/vcpkg-ports"
+    ],
+    "overlay-triplets": [
+      "../cmake/vcpkg-triplets"
+    ]
+  }
 }
