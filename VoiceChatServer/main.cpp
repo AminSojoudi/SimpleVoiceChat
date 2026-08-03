@@ -1,4 +1,5 @@
 #include "Server.h"
+#include "Config.h"
 
 
 bool shouldExit = false;
@@ -15,16 +16,14 @@ int main(int argc, const char *argv[] )
     signal(SIGINT, signal_callback_handler);
     signal(SIGTERM, signal_callback_handler);
 
-    Server* server = new Server();
-
-    uint16 port = 27020;
-    if (argc == 2){
-        port = std::stoi(argv[1]);
-    } else{
-        printf("port not provided, using default port 27020 \n usage: ./server [port]");
+    ServerConfig config;
+    if (auto exitCode = ConfigParser::Parse(argc, argv, config)) {
+        return *exitCode;
     }
 
-    bool socket_success = server->StartServer(port);
+    Server* server = new Server();
+
+    bool socket_success = server->StartServer(config.port, config.bindAddress, config.logLevel, config.sampleRate);
 
     while (socket_success && !shouldExit){
 

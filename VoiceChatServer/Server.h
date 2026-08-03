@@ -43,8 +43,11 @@
 #include "../Common/Messages/MessageTypes.h"
 #include "../Common/Messages/AudioMessage.h"
 #include "../Common/Messages/SetChannelMessage.h"
+#include "../Common/Messages/ServerInfoRequestMessage.h"
+#include "../Common/Messages/ServerInfoMessage.h"
 #include <map>
 #include <set>
+#include <string>
 
 
 class Server {
@@ -52,18 +55,19 @@ private:
     HSteamListenSocket socket;
     uint16 sentBytesCount;
     uint16 receivedBytesCount;
+    uint32 sampleRate;
     static ISteamNetworkingSockets* steamNetworking;
     static SteamNetworkingMicroseconds g_logTimeZero;
     static HSteamNetPollGroup connectionPollGroup;
     static std::map<int64, std::set<HSteamNetConnection>> channelToConnnectionsMap;
 
-    static void InitSteamDatagramConnectionSockets();
+    static void InitSteamDatagramConnectionSockets(ESteamNetworkingSocketsDebugOutputType logLevel);
     static void DebugOutput( ESteamNetworkingSocketsDebugOutputType eType, const char *pszMsg );
     static void OnSteamNetConnectionStatusChanged( SteamNetConnectionStatusChangedCallback_t *pInfo );
 
 public:
     static Server* Instance;
-    bool  StartServer(uint16 port);
+    bool  StartServer(uint16 port, const std::string& bindAddress, ESteamNetworkingSocketsDebugOutputType logLevel, uint32 audioSampleRate);
     void PollIncomingMessages();
     void PollConnectionStateChanges();
     uint16 GetSentBytes();

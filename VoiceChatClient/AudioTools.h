@@ -16,7 +16,7 @@ private:
     //int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void* userData);
 
 public:
-    bool StartRecording(SocketClient * socket, NetworkBuffer* networkBuffer);
+    bool StartRecording(SocketClient * socket, NetworkBuffer* networkBuffer, unsigned int sampleRate, unsigned int bufferFrames);
     bool StopRecording();
     ~AudioTools();
 };

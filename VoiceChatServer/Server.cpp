@@ -10,11 +10,12 @@ HSteamNetPollGroup Server::connectionPollGroup;
 std::map<int64, std::set<HSteamNetConnection>> Server::channelToConnnectionsMap;
 
 
-bool Server::StartServer(uint16 port) {
+bool Server::StartServer(uint16 port, const std::string& bindAddress, ESteamNetworkingSocketsDebugOutputType logLevel, uint32 audioSampleRate) {
     Instance = this;
+    sampleRate = audioSampleRate;
 
     // Create client and server sockets
-    InitSteamDatagramConnectionSockets();
+    InitSteamDatagramConnectionSockets(logLevel);
 
     steamNetworking = SteamNetworkingSockets();
 
@@ -25,7 +26,12 @@ bool Server::StartServer(uint16 port) {
     }
 
     SteamNetworkingIPAddr addr;
-    addr.Clear();
+    if (bindAddress.empty()) {
+        addr.Clear();
+    } else if (!addr.ParseString(bindAddress.c_str())) {
+        printf("Failed to parse bind address %s\n", bindAddress.c_str());
+        return false;
+    }
     addr.m_port = port;
 
     SteamNetworkingConfigValue_t options;
@@ -40,7 +46,7 @@ bool Server::StartServer(uint16 port) {
         printf("Failed to listen on port %d", port);
         return false;
     }
-    printf( "Server listening on port %d\n", port );
+    printf( "Server listening on port %d, sample rate %u Hz\n", port, sampleRate );
 
 
     return true;
@@ -64,7 +70,7 @@ void Server::DebugOutput( ESteamNetworkingSocketsDebugOutputType eType, const ch
     }
 }
 
-void Server::InitSteamDatagramConnectionSockets()
+void Server::InitSteamDatagramConnectionSockets(ESteamNetworkingSocketsDebugOutputType logLevel)
 {
 #ifdef STEAMNETWORKINGSOCKETS_OPENSOURCE
     SteamDatagramErrMsg errMsg;
@@ -89,7 +95,7 @@ void Server::InitSteamDatagramConnectionSockets()
 
     g_logTimeZero = SteamNetworkingUtils()->GetLocalTimestamp();
 
-    SteamNetworkingUtils()->SetDebugOutputFunction( k_ESteamNetworkingSocketsDebugOutputType_Msg, DebugOutput );
+    SteamNetworkingUtils()->SetDebugOutputFunction( logLevel, DebugOutput );
 }
 
 void Server::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t *pInfo) {
@@ -273,6 +279,17 @@ void Server::PollIncomingMessages() {
                 }
                 //printf("\r Data received on server, data size = %u bytes", pIncomingMsg->GetSize());
                 break;
+            case GET_SERVER_INFO:
+            {
+                ServerInfo serverInfo;
+                serverInfo.sampleRate = sampleRate;
+                steamNetworking->SendMessageToConnection(pIncomingMsg->m_conn, &serverInfo, sizeof(serverInfo),
+                    k_nSteamNetworkingSend_ReliableNoNagle,
+                    nullptr);
+                sentBytesCount += sizeof(serverInfo);
+                printf("\r server info requested, sent sample rate %u", sampleRate);
+                break;
+            }
             default:
                 break;
         }
