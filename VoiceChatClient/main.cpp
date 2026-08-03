@@ -1,13 +1,11 @@
 #include <iostream>
 #include <chrono>
+#include <cstdint>
 #include "AudioTools.h"
 #include "Config.h"
 
 // How long we wait for the connection and the server info before giving up.
 const int HandshakeTimeoutSeconds = 30;
-
-// AudioData holds this many samples, so a buffer bigger than this would drop audio.
-const unsigned int MaxBufferFrames = 1024;
 
 int main(int argc, const char *argv[] ) {
 
@@ -70,16 +68,27 @@ int main(int argc, const char *argv[] ) {
         std::this_thread::sleep_for(syncInterval);
     }
 
-    // Match the audio buffer to how often we poll the network, so playback never runs dry.
+    // Don't trust the rate the server sent us blindly, we do maths with it below.
     unsigned int sampleRate = clientSocket->GetServerInfo().sampleRate;
-    unsigned int bufferFrames = sampleRate * config.syncIntervalMs / 1000;
-
-    if (bufferFrames < 1 || bufferFrames > MaxBufferFrames) {
-        printf("sync interval of %u ms does not work with the server sample rate of %u Hz: "
-               "it needs %u frames per buffer, but only 1 to %u are supported\n",
-               config.syncIntervalMs, sampleRate, bufferFrames, MaxBufferFrames);
+    if (sampleRate < MinSampleRate || sampleRate > MaxSampleRate) {
+        printf("server reported a sample rate of %u Hz, which is outside the supported range of %u to %u Hz\n",
+               sampleRate, MinSampleRate, MaxSampleRate);
         return 1;
     }
+
+    // Match the audio buffer to how often we poll the network, so playback never runs dry.
+    // Work in 64 bits so a large sync interval cannot wrap around and pass the check below.
+    uint64_t frames = (uint64_t)sampleRate * config.syncIntervalMs / 1000;
+
+    // A buffer bigger than the audio message can hold would drop samples.
+    if (frames < 1 || frames > AudioData::Capacity) {
+        printf("sync interval of %u ms does not work with the server sample rate of %u Hz: "
+               "it needs %llu frames per buffer, but only 1 to %zu are supported\n",
+               config.syncIntervalMs, sampleRate, (unsigned long long)frames, AudioData::Capacity);
+        return 1;
+    }
+
+    unsigned int bufferFrames = (unsigned int)frames;
 
     SetChannel message;
     message.channel = config.channel;

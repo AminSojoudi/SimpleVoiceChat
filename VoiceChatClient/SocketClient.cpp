@@ -160,13 +160,27 @@ void SocketClient::PollIncomingMessages(NetworkBuffer* _voiceAudioBuffer)
         {
             case AUDIO:
             {
+                const uint32 received = pIncomingMsg->GetSize();
+
+                // Messages carry only the samples the sender captured, so check the
+                // size before trusting the count.
+                if (received < AudioData::HeaderSize()) {
+                    printf("dropping audio message that is too short: %u bytes \n", received);
+                    break;
+                }
+
                 auto* audioData = static_cast<AudioData*>(pIncomingMsg->m_pData);
+                const uint32 sampleCount = audioData->sampleCount;
+
+                if (sampleCount > AudioData::Capacity ||
+                    AudioData::HeaderSize() + sampleCount * sizeof(AUDIO_SAMPLE) > received) {
+                    printf("dropping audio message claiming %u samples in %u bytes \n", sampleCount, received);
+                    break;
+                }
 
                 // Playback
-                const size_t buffer_size = audioData->inputCurrentCounter;
-                for (size_t i = 0; i < buffer_size; ++i) {
-                    if (audioData->Input[i] != 0)
-                        _voiceAudioBuffer->AddInput(audioData->Input[i]);
+                for (uint32 i = 0; i < sampleCount; ++i) {
+                    _voiceAudioBuffer->AddInput(audioData->Input[i]);
                     // Only enable this part for debugging, any action here causes delays on the voice
                     //printf("%d," , audioData->Input[i]);
                 }

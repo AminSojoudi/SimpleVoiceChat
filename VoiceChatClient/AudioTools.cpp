@@ -19,15 +19,20 @@ void DoNetwork(const AudioData &_data){
         return;
     }
 
+    if (_data.sampleCount == 0){
+        return;
+    }
+
     // Only enable this part for debugging, any action here causes delays on the voice
-    //printf("sending data with size %d : \n", _data.inputCurrentCounter);
+    //printf("sending data with size %u : \n", _data.sampleCount);
     //printf("send counter is %d \n", ++counter);
-    //for (int i = 0; i < _data.inputCurrentCounter; ++i) {
+    //for (uint32 i = 0; i < _data.sampleCount; ++i) {
     //    printf("%d," , _data.Input[i]);
     //}
     //printf("\n");
 
-    clientSocket->Send(&_data, sizeof(_data));
+    // Send only the samples we captured, not the whole fixed size buffer.
+    clientSocket->Send(&_data, _data.WireSize());
 }
 
 int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,

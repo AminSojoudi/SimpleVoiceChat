@@ -32,6 +32,7 @@ Simple C++ UDP based Voice Chat Application using Valve [Game Network Sockets](h
 - [ ] Make Releases for Client in Github
 - [X] Automate Builds
 - [X] Add log Level functionality to server and client
+- [ ] Add protocol versioning so clients and servers can detect a mismatch
 - [ ] improve resiliency to different network bandwidths and network changes
 - [X] Calculate bandwith usage
 - [ ] Optimise bandwith

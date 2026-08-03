@@ -4,6 +4,15 @@
 #include <optional>
 #include <steam/isteamnetworkingutils.h>
 
+// Polling slower than once a second is useless for voice, and capping it here keeps
+// the audio buffer size we derive from it small enough to compute safely.
+const unsigned int MinSyncIntervalMs = 1;
+const unsigned int MaxSyncIntervalMs = 1000;
+
+// Sample rates we accept from a server. Anything outside this is a broken server.
+const unsigned int MinSampleRate = 8000;
+const unsigned int MaxSampleRate = 192000;
+
 struct ClientConfig {
     std::string serverAddress = "127.0.0.1";
     uint16_t port = 27020;

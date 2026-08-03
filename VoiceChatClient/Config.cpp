@@ -27,7 +27,7 @@ std::optional<int> ConfigParser::Parse(int argc, const char *argv[], ClientConfi
         ("p,port", "Server UDP port", cxxopts::value<uint16_t>()->default_value("27020"))
         ("c,channel", "Voice channel", cxxopts::value<int64_t>()->default_value("0"))
         ("l,log-level", "Log level: none|error|warning|info|verbose|debug|everything", cxxopts::value<std::string>()->default_value("info"))
-        ("s,sync-interval", "How often to poll the network, in milliseconds", cxxopts::value<unsigned int>()->default_value("5"))
+        ("s,sync-interval", "How often to poll the network, in milliseconds (1 to 1000)", cxxopts::value<unsigned int>()->default_value("5"))
         ("h,help", "Print usage");
 
     try {
@@ -45,9 +45,12 @@ std::optional<int> ConfigParser::Parse(int argc, const char *argv[], ClientConfi
             return 1;
         }
 
+        // Keep the interval in a range that makes sense for voice. This also keeps the
+        // audio buffer size we derive from it well inside what we can compute safely.
         unsigned int syncIntervalMs = result["sync-interval"].as<unsigned int>();
-        if (syncIntervalMs == 0) {
-            std::cerr << "Invalid sync interval: must be greater than 0" << std::endl;
+        if (syncIntervalMs < MinSyncIntervalMs || syncIntervalMs > MaxSyncIntervalMs) {
+            std::cerr << "Invalid sync interval " << syncIntervalMs << ": must be between "
+                      << MinSyncIntervalMs << " and " << MaxSyncIntervalMs << " ms" << std::endl;
             return 1;
         }
 
