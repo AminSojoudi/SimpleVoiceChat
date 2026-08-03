@@ -6,6 +6,8 @@
 #include "../Common/Messages/MessageTypes.h"
 #include "../Common/Messages/AudioMessage.h"
 #include "../Common/Messages/SetChannelMessage.h"
+#include "../Common/Messages/ServerInfoRequestMessage.h"
+#include "../Common/Messages/ServerInfoMessage.h"
 #include "Utils.h"
 #include <steam/isteamnetworkingutils.h>
 #include <cassert>
@@ -44,17 +46,22 @@ private:
     static ISteamNetworkingSockets* steamNetworking;
     static SteamNetworkingMicroseconds g_logTimeZero;
     static bool isConnected;
+    static ServerInfo serverInfo;
+    static bool hasServerInfo;
 
-    static void InitSteamDatagramConnectionSockets();
+    static void InitSteamDatagramConnectionSockets(ESteamNetworkingSocketsDebugOutputType logLevel);
     static void DebugOutput( ESteamNetworkingSocketsDebugOutputType eType, const char *pszMsg );
     static void OnSteamNetConnectionStatusChanged( SteamNetConnectionStatusChangedCallback_t *pInfo );
 
 public:
     bool IsConnected();
+    bool HasServerInfo();
+    const ServerInfo& GetServerInfo();
+    void RequestServerInfo();
     bool Connect(SteamNetworkingIPAddr add);
     void PollIncomingMessages(NetworkBuffer* _voiceOutputBuffer);
     void PollConnectionStateChanges();
     void Send(const void* data, uint32 size);
-    SocketClient();
+    explicit SocketClient(ESteamNetworkingSocketsDebugOutputType logLevel = k_ESteamNetworkingSocketsDebugOutputType_Msg);
     ~SocketClient();
 };

@@ -8,9 +8,11 @@ SteamNetworkingMicroseconds SocketClient::g_logTimeZero;
 HSteamNetConnection SocketClient::connection;
 ISteamNetworkingSockets* SocketClient::steamNetworking;
 bool SocketClient::isConnected = false;
+ServerInfo SocketClient::serverInfo;
+bool SocketClient::hasServerInfo = false;
 
 
-void SocketClient::InitSteamDatagramConnectionSockets() {
+void SocketClient::InitSteamDatagramConnectionSockets(ESteamNetworkingSocketsDebugOutputType logLevel) {
 #ifdef STEAMNETWORKINGSOCKETS_OPENSOURCE
     SteamDatagramErrMsg errMsg;
     if ( !GameNetworkingSockets_Init( nullptr, errMsg ) )
@@ -34,7 +36,7 @@ void SocketClient::InitSteamDatagramConnectionSockets() {
 
     g_logTimeZero = SteamNetworkingUtils()->GetLocalTimestamp();
 
-    SteamNetworkingUtils()->SetDebugOutputFunction( k_ESteamNetworkingSocketsDebugOutputType_Msg, DebugOutput );
+    SteamNetworkingUtils()->SetDebugOutputFunction( logLevel, DebugOutput );
 }
 
 void SocketClient::DebugOutput(ESteamNetworkingSocketsDebugOutputType eType, const char *pszMsg) {
@@ -127,7 +129,6 @@ bool SocketClient::Connect(SteamNetworkingIPAddr add) {
     return true;
 }
 
-int receiveCounter = 0;
 void SocketClient::PollIncomingMessages(NetworkBuffer* _voiceAudioBuffer)
 {
     if (connection == k_HSteamNetConnection_Invalid){
@@ -148,31 +149,39 @@ void SocketClient::PollIncomingMessages(NetworkBuffer* _voiceAudioBuffer)
         }
 
 
-        auto* audioData = static_cast<AudioData*>(pIncomingMsg->m_pData);
-        if (!audioData) {
-            // Handle the case where the cast failed
+        if (pIncomingMsg->m_pData == nullptr || pIncomingMsg->GetSize() == 0) {
             pIncomingMsg->Release();
             continue;
         }
 
-        printf("received data from server, size: %u \n", audioData->inputCurrentCounter);
+        uint8_t messageType = ((uint8_t*)pIncomingMsg->m_pData)[0];
 
-        printf("receive counter is %d \n", ++receiveCounter);
-        if (pIncomingMsg->GetSize() == 0) {
-            pIncomingMsg->Release();
-            continue;
-        }
-        //_voiceAudioBuffer->ResetData();
+        switch (messageType)
+        {
+            case AUDIO:
+            {
+                auto* audioData = static_cast<AudioData*>(pIncomingMsg->m_pData);
 
-        // Playback
-        const size_t buffer_size = audioData->inputCurrentCounter;
-        for (size_t i = 0; i < buffer_size; ++i) {
-            if (audioData->Input[i] != 0)
-                _voiceAudioBuffer->AddInput(audioData->Input[i]);
-            // Only enable this part for debugging, any action here causes delays on the voice
-            //printf("%d," , audioData->Input[i]);
+                // Playback
+                const size_t buffer_size = audioData->inputCurrentCounter;
+                for (size_t i = 0; i < buffer_size; ++i) {
+                    if (audioData->Input[i] != 0)
+                        _voiceAudioBuffer->AddInput(audioData->Input[i]);
+                    // Only enable this part for debugging, any action here causes delays on the voice
+                    //printf("%d," , audioData->Input[i]);
+                }
+                break;
+            }
+            case SERVER_INFO:
+            {
+                serverInfo = *static_cast<ServerInfo*>(pIncomingMsg->m_pData);
+                hasServerInfo = true;
+                printf("received server info, sample rate %u \n", serverInfo.sampleRate);
+                break;
+            }
+            default:
+                break;
         }
-        printf("\n");
 
         // We don't need this anymore.
         pIncomingMsg->Release();
@@ -184,9 +193,9 @@ void SocketClient::PollConnectionStateChanges()
     steamNetworking->RunCallbacks();
 }
 
-SocketClient::SocketClient() {
+SocketClient::SocketClient(ESteamNetworkingSocketsDebugOutputType logLevel) {
     // Create client and server sockets
-    InitSteamDatagramConnectionSockets();
+    InitSteamDatagramConnectionSockets(logLevel);
     steamNetworking = SteamNetworkingSockets();
 }
 
@@ -204,4 +213,17 @@ void SocketClient::Send(const void *data, uint32 size) {
 
 bool SocketClient::IsConnected() {
     return isConnected;
+}
+
+bool SocketClient::HasServerInfo() {
+    return hasServerInfo;
+}
+
+const ServerInfo& SocketClient::GetServerInfo() {
+    return serverInfo;
+}
+
+void SocketClient::RequestServerInfo() {
+    ServerInfoRequest message;
+    Send(&message, sizeof(message));
 }

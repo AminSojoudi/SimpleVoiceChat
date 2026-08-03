@@ -4,9 +4,6 @@
 
 #include "AudioTools.h"
 
-#define FRAMES_PER_BUFFER (512)
-#define SAMPLE_RATE   (44100)
-
 //typedef signed short MY_TYPE;
 //#define FORMAT RTAUDIO_SINT16
 
@@ -79,7 +76,7 @@ int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
 }
 
 
-bool AudioTools::StartRecording(SocketClient* socketClient, NetworkBuffer* buffer) {
+bool AudioTools::StartRecording(SocketClient* socketClient, NetworkBuffer* buffer, unsigned int sampleRate, unsigned int bufferFrames) {
 
     clientSocket = socketClient;
     networkBuffer = buffer;
@@ -87,13 +84,10 @@ bool AudioTools::StartRecording(SocketClient* socketClient, NetworkBuffer* buffe
     {
         if (audio.getDeviceCount() < 1) {
             std::cerr << "No audio devices found!\n";
-            return 1;
+            return false;
         }
         audio.showWarnings(true);
 
-        // Parameters
-        unsigned int sampleRate = 44100;
-        unsigned int bufferFrames = 256; // frames per buffer
         RtAudio::StreamParameters iParams, oParams;
 
         // --- MONO INPUT ---
@@ -110,25 +104,31 @@ bool AudioTools::StartRecording(SocketClient* socketClient, NetworkBuffer* buffe
         RtAudio::StreamOptions options;
         options.flags = RTAUDIO_HOG_DEVICE | RTAUDIO_SCHEDULE_REALTIME;
 
-        audio.openStream(
+        if (audio.openStream(
             &oParams, &iParams,
             RTAUDIO_SINT16, sampleRate,
             &bufferFrames,
             &record,
             &data
-        );
+        )) {
+            std::cerr << "Failed to open audio stream at " << sampleRate << " Hz with "
+                      << bufferFrames << " frames per buffer: " << audio.getErrorText() << std::endl;
+            return false;
+        }
 
         // Stream is open ... now start it.
         if (audio.startStream()) {
-            std::cout << audio.getErrorText() << std::endl;
+            std::cerr << "Failed to start audio stream: " << audio.getErrorText() << std::endl;
             this->StopRecording();
+            return false;
         }
 
         return true;
 
     }
-    catch (const std::exception&)
+    catch (const std::exception& e)
     {
+        std::cerr << "Audio setup failed: " << e.what() << std::endl;
         return false;
     }
 }

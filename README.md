@@ -13,6 +13,14 @@ Simple C++ UDP based Voice Chat Application using Valve [Game Network Sockets](h
 
 - Build and run the client to connect to the server
 
+        ./VoiceChatClient --address 127.0.0.1 --port 27020 --channel 0 --log-level info --sync-interval 5
+
+  The sample rate is a server setting (`--sample-rate` on `VoiceChatServer`, default 44100). Clients
+  ask the server for it when they connect, so every client on a server uses the same rate. The client
+  picks its own `--sync-interval` to trade latency against how often it polls the network.
+
+  Both `VoiceChatServer` and `VoiceChatClient` accept `--help` for the full list of flags and defaults.
+
 
 # TODO
 - [X] Make Client Multiplatform
@@ -23,7 +31,7 @@ Simple C++ UDP based Voice Chat Application using Valve [Game Network Sockets](h
 - [X] Dockerize Server and push to DockerHub
 - [ ] Make Releases for Client in Github
 - [X] Automate Builds
-- [ ] Add log Level functionality to server and client
+- [X] Add log Level functionality to server and client
 - [ ] improve resiliency to different network bandwidths and network changes
 - [X] Calculate bandwith usage
 - [ ] Optimise bandwith

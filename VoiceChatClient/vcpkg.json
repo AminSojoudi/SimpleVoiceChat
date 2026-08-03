@@ -1,6 +1,7 @@
 {
   "dependencies": [
     "gamenetworkingsockets",
-    "rtaudio"
+    "rtaudio",
+    "cxxopts"
   ]
 }
