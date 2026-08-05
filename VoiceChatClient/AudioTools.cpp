@@ -3,6 +3,7 @@
 //
 
 #include "AudioTools.h"
+#include "../Common/Serialization/AudioStats.h"
 
 //typedef signed short MY_TYPE;
 //#define FORMAT RTAUDIO_SINT16
@@ -13,7 +14,7 @@ SocketClient* clientSocket;
 
 int counter = 0;
 
-void DoNetwork(const AudioData &_data){
+void DoNetwork(AudioData &_data){
 
     if (!clientSocket->IsConnected()){
         return;
@@ -31,8 +32,17 @@ void DoNetwork(const AudioData &_data){
     //}
     //printf("\n");
 
-    // Send only the samples we captured, not the whole fixed size buffer.
-    clientSocket->Send(&_data, _data.WireSize());
+    VOICECHAT_AUDIO_STATS_RECORD(_data.Input, _data.sampleCount);
+
+    // Encode only the samples we captured. senderId stays 0: the server stamps it.
+    static uint8_t buf[AudioData::MaxWireSize];
+    WriteStream stream(buf, sizeof(buf));
+    if (!_data.Serialize(stream)) {
+        printf("failed to encode audio message \n");
+        return;
+    }
+    stream.Flush();
+    clientSocket->Send(buf, stream.BytesWritten());
 }
 
 int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
@@ -56,8 +66,14 @@ int record(void* outputBuffer, void* inputBuffer, unsigned int nBufferFrames,
         //output[2* i] = input[i];     // loop back
         //output[2* i + 1] = input[i];     // loop back
 
-        // recording
+        // recording; a full packet goes out right away, so one callback can
+        // capture more frames than a single audio message holds
         _data->AddInput(input[i]);
+        if (_data->sampleCount == AudioData::Capacity)
+        {
+            DoNetwork(*_data);
+            _data->ResetData();
+        }
     }
 
     if (networkBuffer->Size() >= nBufferFrames)

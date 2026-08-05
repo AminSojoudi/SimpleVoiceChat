@@ -7,7 +7,50 @@ Server* Server::Instance = nullptr;
 SteamNetworkingMicroseconds Server::g_logTimeZero;
 ISteamNetworkingSockets* Server::steamNetworking;
 HSteamNetPollGroup Server::connectionPollGroup;
-std::map<int64, std::set<HSteamNetConnection>> Server::channelToConnnectionsMap;
+std::map<HSteamNetConnection, ClientInfo> Server::clients;
+uint32 Server::nextClientId = 1;
+
+
+// Encodes a message into buf. Returns the wire size, or 0 on failure.
+template<typename Msg>
+static uint32 EncodeMessage(Msg& msg, uint8_t* buf, uint32 capacity) {
+    WriteStream stream(buf, capacity);
+    if (!msg.Serialize(stream))
+        return 0;
+    stream.Flush();
+    return stream.BytesWritten();
+}
+
+
+void Server::SendMessage(HSteamNetConnection conn, const void* bytes, uint32 size) {
+    steamNetworking->SendMessageToConnection(conn, bytes, size,
+        k_nSteamNetworkingSend_ReliableNoNagle, nullptr);
+    Instance->sentBytesCount += size;
+}
+
+void Server::BroadcastToConfigured(const void* bytes, uint32 size, HSteamNetConnection skip) {
+    for (auto& [conn, info] : clients) {
+        if (!info.hasConfig || conn == skip)
+            continue;
+        SendMessage(conn, bytes, size);
+    }
+}
+
+void Server::FillClientEntry(ClientEntry& out, const ClientInfo& info) {
+    out.channel = info.channel;
+    out.clientId = info.clientId;
+    out.muted = info.muted ? 1 : 0;
+    snprintf(out.name, sizeof(out.name), "%s", info.name.c_str());
+}
+
+void Server::RejectClient(HSteamNetConnection conn, const char* reason) {
+    printf("\r rejecting client: %s\n", reason);
+    // The reason string rides in the close packet; the client prints it.
+    // A locally initiated close never re-enters the disconnect callback,
+    // so we erase the entry here.
+    steamNetworking->CloseConnection(conn, k_ESteamNetConnectionEnd_App_Generic, reason, false);
+    clients.erase(conn);
+}
 
 
 bool Server::StartServer(uint16 port, const std::string& bindAddress, ESteamNetworkingSocketsDebugOutputType logLevel, uint32 audioSampleRate) {
@@ -151,6 +194,26 @@ void Server::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCa
                 assert( pInfo->m_eOldState == k_ESteamNetworkingConnectionState_Connecting );
             }
 
+            // Tell the others before we forget the client. Only clients that
+            // reached configured state ever appeared in anyone's client list.
+            auto leaver = clients.find( pInfo->m_hConn );
+            if ( leaver != clients.end() && leaver->second.hasConfig )
+            {
+                ClientLeft left;
+                left.clientId = leaver->second.clientId;
+                uint8_t buf[ClientLeft::MaxWireSize];
+                uint32 size = EncodeMessage(left, buf, sizeof(buf));
+                if ( size > 0 )
+                {
+                    printf( "\r client left: id %u (%s)\n", left.clientId, leaver->second.name.c_str() );
+                    BroadcastToConfigured( buf, size, pInfo->m_hConn );
+                }
+            }
+
+            // Forget the client. The entry exists from accept time even if the
+            // client never reached the connected state.
+            clients.erase( pInfo->m_hConn );
+
             // Clean up the connection.  This is important!
             // The connection is "closed" in the network sense, but
             // it has not been destroyed.  We must close it on our end, too
@@ -188,22 +251,13 @@ void Server::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCa
                 break;
             }
 
-            // Generate a random nick.  A random temporary nick
-            // is really dumb and not how you would write a real chat server.
-            // You would want them to have some sort of signon message,
-            // and you would keep their client in a state of limbo (connected,
-            // but not logged on) until them.  I'm trying to keep this example
-            // code really simple.
-            char nick[ 64 ];
-            sprintf( nick, "BraveWarrior%d", 10000 + ( rand() % 100000 ) );
-
-            // Send them a welcome message
-            sprintf( temp, "Welcome, stranger.  Thou art known to us for now as '%s'; upon thine command '/nick' we shall know thee otherwise.", nick );
-
-
-
-            // Let everybody else know who they are for now
-            sprintf( temp, "Hark!  A stranger hath joined this merry host.  For now we shall call them '%s'", nick );
+            // Track the client from now on. Config fields keep their defaults
+            // until the client sends SET_CLIENT_CONFIG.
+            char endpoint[ SteamNetworkingIPAddr::k_cchMaxString ];
+            pInfo->m_info.m_addrRemote.ToString( endpoint, sizeof(endpoint), true );
+            clients[pInfo->m_hConn].endpoint = endpoint;
+            clients[pInfo->m_hConn].clientId = nextClientId++;
+            printf( "\r assigned client id %u to %s\n", clients[pInfo->m_hConn].clientId, endpoint );
 
             break;
         }
@@ -223,9 +277,6 @@ void Server::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCa
 }
 
 void Server::PollIncomingMessages() {
-    char temp[ 1024 ];
-    SetChannel* setChannel;
-    int64 channel;
     ResetCounters();
     while ( 1)
     {
@@ -237,61 +288,172 @@ void Server::PollIncomingMessages() {
             printf( "Error checking for messages" );
         assert( numMsgs == 1 && pIncomingMsg );
 
-        if (pIncomingMsg->m_pData == NULL){
-            printf("received null data!\n");
-            break;
+        if (pIncomingMsg->m_pData == NULL || pIncomingMsg->GetSize() == 0){
+            printf("received empty message!\n");
+            pIncomingMsg->Release();
+            continue;
         }
 
         uint8_t messageType = ((uint8_t*)pIncomingMsg->m_pData)[0];
         receivedBytesCount += pIncomingMsg->GetSize();
 
-        //printf("message type is %d \n", messageType);
-
-
         switch (messageType)
         {
-            case SET_CHANNEL:
-                setChannel = (SetChannel*) pIncomingMsg->m_pData;
-                steamNetworking->SetConnectionUserData(pIncomingMsg->m_conn, setChannel->channel);
-                if (channelToConnnectionsMap.find(setChannel->channel) == channelToConnnectionsMap.end()) {
-                    channelToConnnectionsMap[setChannel->channel] = { pIncomingMsg->m_conn };
+            case SET_CLIENT_CONFIG:
+            {
+                auto it = clients.find(pIncomingMsg->m_conn);
+                if (it == clients.end()) {
+                    break;
                 }
-                else {
-                    channelToConnnectionsMap[setChannel->channel].insert(pIncomingMsg->m_conn);
+
+                SetClientConfig config;
+                ReadStream stream(pIncomingMsg->m_pData, pIncomingMsg->GetSize());
+                if (!config.Serialize(stream)) {
+                    RejectClient(pIncomingMsg->m_conn, "malformed SetClientConfig");
+                    break;
                 }
-                printf("\r set channel received %d", setChannel->channel);
-                break;
-            case AUDIO:
-                //printf("size of received data: %u \n", pIncomingMsg->GetSize());
-                channel = pIncomingMsg->GetConnectionUserData();
-                //printf("total connections %d \n", channelToConnnectionsMap[channel].size());
-                if (channelToConnnectionsMap.find(channel) != channelToConnnectionsMap.end()) {
-                    for (auto it = channelToConnnectionsMap[channel].begin(); it != channelToConnnectionsMap[channel].end(); ++it) {
-                        if (*it == pIncomingMsg->m_conn)
-                        {
+                if (config.protocolVersion != PROTOCOL_VERSION) {
+                    char reason[128];
+                    snprintf(reason, sizeof(reason), "server protocol %u, client protocol %u",
+                        PROTOCOL_VERSION, config.protocolVersion);
+                    RejectClient(pIncomingMsg->m_conn, reason);
+                    break;
+                }
+
+                bool firstConfig = !it->second.hasConfig;
+                it->second.channel = config.channel;
+                it->second.loopback = config.loopback != 0;
+                it->second.muted = config.muted != 0;
+                if (config.name[0] == '\0') {
+                    char fallback[32];
+                    snprintf(fallback, sizeof(fallback), "client-%u", it->second.clientId);
+                    it->second.name = fallback;
+                } else {
+                    it->second.name = config.name;
+                }
+                it->second.hasConfig = true;
+                printf("\r client config received from %s: id %u, name %s, channel %lld, loopback %d, muted %d\n",
+                    it->second.endpoint.c_str(), it->second.clientId, it->second.name.c_str(),
+                    (long long)config.channel, (int)config.loopback, (int)config.muted);
+
+                if (firstConfig) {
+                    // Send the full client list to the new client.
+                    static ClientList list; // static: too big for the stack next to its buffer
+                    list.clientCount = 0;
+                    for (auto& [conn, info] : clients) {
+                        if (!info.hasConfig)
                             continue;
+                        if (list.clientCount >= ClientList::MaxClients) {
+                            printf("\r warning: more than %u configured clients, client list truncated\n",
+                                ClientList::MaxClients);
+                            break;
                         }
-                        steamNetworking->SendMessageToConnection(*it, pIncomingMsg->m_pData, pIncomingMsg->GetSize(),
-                            k_nSteamNetworkingSend_ReliableNoNagle,
-                            nullptr);
-                        sentBytesCount += pIncomingMsg->GetSize();
+                        FillClientEntry(list.entries[list.clientCount++], info);
                     }
+                    uint8_t listBuf[ClientList::MaxWireSize];
+                    uint32 listSize = EncodeMessage(list, listBuf, sizeof(listBuf));
+                    if (listSize > 0)
+                        SendMessage(pIncomingMsg->m_conn, listBuf, listSize);
+
+                    // Tell everyone else about the newcomer.
+                    ClientJoined joined;
+                    FillClientEntry(joined.entry, it->second);
+                    uint8_t buf[ClientJoined::MaxWireSize];
+                    uint32 size = EncodeMessage(joined, buf, sizeof(buf));
+                    if (size > 0)
+                        BroadcastToConfigured(buf, size, pIncomingMsg->m_conn);
+                } else {
+                    // Config update: broadcast to everyone including the sender.
+                    ClientConfigChanged changed;
+                    FillClientEntry(changed.entry, it->second);
+                    uint8_t buf[ClientConfigChanged::MaxWireSize];
+                    uint32 size = EncodeMessage(changed, buf, sizeof(buf));
+                    if (size > 0)
+                        BroadcastToConfigured(buf, size, k_HSteamNetConnection_Invalid);
                 }
-                //printf("\r Data received on server, data size = %u bytes", pIncomingMsg->GetSize());
                 break;
+            }
+            case AUDIO:
+            {
+                auto sender = clients.find(pIncomingMsg->m_conn);
+                if (sender == clients.end() || !sender->second.hasConfig) {
+                    break;
+                }
+
+                // Validate without a full decode; this is the hot path.
+                // Wire layout: type u8, senderId u32 at bytes 1-4, count u32 at bytes 5-8, samples.
+                const uint32 size = pIncomingMsg->GetSize();
+                uint8_t* bytes = (uint8_t*)pIncomingMsg->m_pData;
+                if (size < 9) {
+                    printf("\r dropped audio message that is too short: %u bytes\n", size);
+                    break;
+                }
+                uint32 count;
+                memcpy(&count, bytes + 5, 4);
+                if (count > AudioData::Capacity || 9 + 2 * count != size) {
+                    printf("\r dropped audio message claiming %u samples in %u bytes\n", count, size);
+                    break;
+                }
+
+                // Stamp the sender id at its fixed wire offset. Clients cannot
+                // spoof it: whatever they sent gets overwritten here. The same
+                // buffer then goes to every recipient.
+                uint32 senderId = sender->second.clientId;
+                memcpy(bytes + 1, &senderId, 4);
+
+                for (auto& [conn, info] : clients) {
+                    if (!info.hasConfig || info.channel != sender->second.channel) {
+                        continue;
+                    }
+                    // The sender only hears themselves if they asked for loopback.
+                    if (conn == pIncomingMsg->m_conn && !sender->second.loopback) {
+                        continue;
+                    }
+                    SendMessage(conn, bytes, size);
+                }
+                break;
+            }
             case GET_SERVER_INFO:
             {
+                ServerInfoRequest request;
+                ReadStream stream(pIncomingMsg->m_pData, pIncomingMsg->GetSize());
+                if (!request.Serialize(stream)) {
+                    RejectClient(pIncomingMsg->m_conn, "malformed ServerInfoRequest - client too old?");
+                    break;
+                }
+                if (request.protocolVersion != PROTOCOL_VERSION) {
+                    char reason[128];
+                    snprintf(reason, sizeof(reason), "server protocol %u, client protocol %u",
+                        PROTOCOL_VERSION, request.protocolVersion);
+                    RejectClient(pIncomingMsg->m_conn, reason);
+                    break;
+                }
+
                 ServerInfo serverInfo;
                 serverInfo.sampleRate = sampleRate;
-                steamNetworking->SendMessageToConnection(pIncomingMsg->m_conn, &serverInfo, sizeof(serverInfo),
-                    k_nSteamNetworkingSend_ReliableNoNagle,
-                    nullptr);
-                sentBytesCount += sizeof(serverInfo);
-                printf("\r server info requested, sent sample rate %u", sampleRate);
+                uint8_t buf[ServerInfo::MaxWireSize];
+                uint32 size = EncodeMessage(serverInfo, buf, sizeof(buf));
+                if (size > 0) {
+                    SendMessage(pIncomingMsg->m_conn, buf, size);
+                    printf("\r server info requested, sent sample rate %u", sampleRate);
+                }
                 break;
             }
             default:
+            {
+                auto it = clients.find(pIncomingMsg->m_conn);
+                if (it == clients.end() || !it->second.hasConfig) {
+                    // Likely a pre-phase-1 client. Give it a clear reason
+                    // instead of a 30 second hang.
+                    char reason[96];
+                    snprintf(reason, sizeof(reason), "unrecognized message type %u; server protocol %u",
+                        messageType, PROTOCOL_VERSION);
+                    RejectClient(pIncomingMsg->m_conn, reason);
+                } else {
+                    printf("\r ignoring unrecognized message type %u from a configured client\n", messageType);
+                }
                 break;
+            }
         }
 
         // We don't need this anymore.

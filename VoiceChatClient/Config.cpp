@@ -1,5 +1,6 @@
 #include "Config.h"
 
+#include "../Common/Messages/MessageTypes.h"
 #include <cxxopts.hpp>
 #include <iostream>
 #include <algorithm>
@@ -26,6 +27,8 @@ std::optional<int> ConfigParser::Parse(int argc, const char *argv[], ClientConfi
         ("a,address", "Server address", cxxopts::value<std::string>()->default_value("127.0.0.1"))
         ("p,port", "Server UDP port", cxxopts::value<uint16_t>()->default_value("27020"))
         ("c,channel", "Voice channel", cxxopts::value<int64_t>()->default_value("0"))
+        ("n,name", "Display name shown to other clients (up to 31 characters)", cxxopts::value<std::string>()->default_value(""))
+        ("loopback", "Hear your own voice echoed back from the server", cxxopts::value<bool>()->default_value("false"))
         ("l,log-level", "Log level: none|error|warning|info|verbose|debug|everything", cxxopts::value<std::string>()->default_value("info"))
         ("s,sync-interval", "How often to poll the network, in milliseconds (1 to 1000)", cxxopts::value<unsigned int>()->default_value("5"))
         ("h,help", "Print usage");
@@ -54,9 +57,17 @@ std::optional<int> ConfigParser::Parse(int argc, const char *argv[], ClientConfi
             return 1;
         }
 
+        std::string name = result["name"].as<std::string>();
+        if (name.size() > MaxClientNameLength) {
+            std::cerr << "Invalid name: must be at most " << MaxClientNameLength << " characters" << std::endl;
+            return 1;
+        }
+
         out.serverAddress = result["address"].as<std::string>();
         out.port = result["port"].as<uint16_t>();
         out.channel = result["channel"].as<int64_t>();
+        out.name = name;
+        out.loopback = result["loopback"].as<bool>();
         out.logLevel = logLevel;
         out.syncIntervalMs = syncIntervalMs;
 

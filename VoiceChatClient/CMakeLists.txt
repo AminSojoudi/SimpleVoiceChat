@@ -15,6 +15,6 @@ add_executable(VoiceChatClient main.cpp
         AudioTools.h
         Config.cpp
         Config.h
-        "../Common/Messages/AudioMessage.h" "../Common/Messages/SetChannelMessage.h" "../Common/Messages/MessageTypes.h" "../Common/Messages/ServerInfoMessage.h" "../Common/Messages/ServerInfoRequestMessage.h" "Utils.h")
+        "../Common/Messages/AudioMessage.h" "../Common/Messages/ClientConfigMessage.h" "../Common/Messages/MessageTypes.h" "../Common/Messages/ServerInfoMessage.h" "../Common/Messages/ServerInfoRequestMessage.h" "../Common/Messages/ClientListMessages.h" "../Common/Serialization/BitStream.h" "../Common/Serialization/Streams.h" "../Common/Serialization/Serialize.h" "../Common/Serialization/AudioStats.h" "Utils.h")
 
 target_link_libraries(VoiceChatClient GameNetworkingSockets::shared RtAudio::rtaudio cxxopts::cxxopts)

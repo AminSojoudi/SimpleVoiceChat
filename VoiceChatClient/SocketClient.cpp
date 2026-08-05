@@ -89,6 +89,8 @@ void SocketClient::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusCha
             printf("closing connection\n");
             steamNetworking->CloseConnection( pInfo->m_hConn, 0, nullptr, false );
             connection = k_HSteamNetConnection_Invalid;
+            // Let the wait loops in main see the drop, e.g. a server rejection.
+            isConnected = false;
             break;
         }
 
@@ -160,37 +162,89 @@ void SocketClient::PollIncomingMessages(NetworkBuffer* _voiceAudioBuffer)
         {
             case AUDIO:
             {
-                const uint32 received = pIncomingMsg->GetSize();
-
-                // Messages carry only the samples the sender captured, so check the
-                // size before trusting the count.
-                if (received < AudioData::HeaderSize()) {
-                    printf("dropping audio message that is too short: %u bytes \n", received);
+                // Range checks live in serialize_sample_array; a failed decode drops the message.
+                static AudioData audioData; // static: too big for the stack
+                ReadStream stream(pIncomingMsg->m_pData, pIncomingMsg->GetSize());
+                if (!audioData.Serialize(stream)) {
+                    printf("dropping malformed audio message of %u bytes \n", pIncomingMsg->GetSize());
                     break;
                 }
 
-                auto* audioData = static_cast<AudioData*>(pIncomingMsg->m_pData);
-                const uint32 sampleCount = audioData->sampleCount;
-
-                if (sampleCount > AudioData::Capacity ||
-                    AudioData::HeaderSize() + sampleCount * sizeof(AUDIO_SAMPLE) > received) {
-                    printf("dropping audio message claiming %u samples in %u bytes \n", sampleCount, received);
-                    break;
-                }
-
-                // Playback
-                for (uint32 i = 0; i < sampleCount; ++i) {
-                    _voiceAudioBuffer->AddInput(audioData->Input[i]);
-                    // Only enable this part for debugging, any action here causes delays on the voice
-                    //printf("%d," , audioData->Input[i]);
+                // Playback. No senderId printing here: latency. Phase 3 consumes it.
+                for (uint32 i = 0; i < audioData.sampleCount; ++i) {
+                    _voiceAudioBuffer->AddInput(audioData.Input[i]);
                 }
                 break;
             }
             case SERVER_INFO:
             {
-                serverInfo = *static_cast<ServerInfo*>(pIncomingMsg->m_pData);
+                ServerInfo info;
+                ReadStream stream(pIncomingMsg->m_pData, pIncomingMsg->GetSize());
+                if (!info.Serialize(stream)) {
+                    printf("dropping malformed server info message \n");
+                    break;
+                }
+                serverInfo = info;
                 hasServerInfo = true;
-                printf("received server info, sample rate %u \n", serverInfo.sampleRate);
+                printf("received server info, sample rate %u, protocol %u \n",
+                    serverInfo.sampleRate, serverInfo.protocolVersion);
+                break;
+            }
+            case CLIENT_LIST:
+            {
+                static ClientList list; // static: too big for the stack
+                ReadStream stream(pIncomingMsg->m_pData, pIncomingMsg->GetSize());
+                if (!list.Serialize(stream)) {
+                    printf("dropping malformed client list \n");
+                    break;
+                }
+                printf("client list: %u clients online \n", list.clientCount);
+                for (uint32 i = 0; i < list.clientCount; ++i) {
+                    const ClientEntry& e = list.entries[i];
+                    printf("  id %u, name %s, channel %lld, muted %d \n",
+                        e.clientId, e.name, (long long)e.channel, (int)e.muted);
+                }
+                fflush(stdout);
+                break;
+            }
+            case CLIENT_JOINED:
+            {
+                ClientJoined joined;
+                ReadStream stream(pIncomingMsg->m_pData, pIncomingMsg->GetSize());
+                if (!joined.Serialize(stream)) {
+                    printf("dropping malformed client joined event \n");
+                    break;
+                }
+                printf("client joined: %s (id %u, channel %lld, muted %d) \n",
+                    joined.entry.name, joined.entry.clientId,
+                    (long long)joined.entry.channel, (int)joined.entry.muted);
+                fflush(stdout);
+                break;
+            }
+            case CLIENT_CONFIG_CHANGED:
+            {
+                ClientConfigChanged changed;
+                ReadStream stream(pIncomingMsg->m_pData, pIncomingMsg->GetSize());
+                if (!changed.Serialize(stream)) {
+                    printf("dropping malformed client config changed event \n");
+                    break;
+                }
+                printf("client config changed: %s (id %u, channel %lld, muted %d) \n",
+                    changed.entry.name, changed.entry.clientId,
+                    (long long)changed.entry.channel, (int)changed.entry.muted);
+                fflush(stdout);
+                break;
+            }
+            case CLIENT_LEFT:
+            {
+                ClientLeft left;
+                ReadStream stream(pIncomingMsg->m_pData, pIncomingMsg->GetSize());
+                if (!left.Serialize(stream)) {
+                    printf("dropping malformed client left event \n");
+                    break;
+                }
+                printf("client left: id %u \n", left.clientId);
+                fflush(stdout);
                 break;
             }
             default:
@@ -214,6 +268,13 @@ SocketClient::SocketClient(ESteamNetworkingSocketsDebugOutputType logLevel) {
 }
 
 SocketClient::~SocketClient() {
+    // Close cleanly so the server broadcasts our leave right away instead of
+    // waiting for a timeout.
+    if (connection != k_HSteamNetConnection_Invalid) {
+        steamNetworking->CloseConnection(connection, 0, "client quit", true);
+        connection = k_HSteamNetConnection_Invalid;
+    }
+    isConnected = false;
     steamNetworking = nullptr;
 }
 
@@ -239,5 +300,12 @@ const ServerInfo& SocketClient::GetServerInfo() {
 
 void SocketClient::RequestServerInfo() {
     ServerInfoRequest message;
-    Send(&message, sizeof(message));
+    uint8_t buf[ServerInfoRequest::MaxWireSize];
+    WriteStream stream(buf, sizeof(buf));
+    if (!message.Serialize(stream)) {
+        printf("failed to encode server info request \n");
+        return;
+    }
+    stream.Flush();
+    Send(buf, stream.BytesWritten());
 }

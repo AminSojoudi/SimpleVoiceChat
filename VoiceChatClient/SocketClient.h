@@ -5,9 +5,11 @@
 
 #include "../Common/Messages/MessageTypes.h"
 #include "../Common/Messages/AudioMessage.h"
-#include "../Common/Messages/SetChannelMessage.h"
+#include "../Common/Messages/ClientConfigMessage.h"
 #include "../Common/Messages/ServerInfoRequestMessage.h"
 #include "../Common/Messages/ServerInfoMessage.h"
+#include "../Common/Messages/ClientListMessages.h"
+#include "../Common/Serialization/Streams.h"
 #include "Utils.h"
 #include <steam/isteamnetworkingutils.h>
 #include <cassert>

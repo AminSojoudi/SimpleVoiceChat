@@ -19,6 +19,7 @@ public:
     ~ConcurrentBag();
 
     void Add(const T& item);
+    void SetMaxSize(size_t maxSize);
     std::optional<T> TryTake();
     std::optional<T> GetAt(size_t index) const;
     bool IsEmpty() const;
@@ -46,6 +47,12 @@ void ConcurrentBag<T>::Add(const T& item) {
         items_.erase(items_.begin());
     }
     items_.emplace_back(item);
+}
+
+template<typename T>
+void ConcurrentBag<T>::SetMaxSize(size_t maxSize) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    maxSize_ = maxSize;
 }
 
 template<typename T>

@@ -1,11 +1,22 @@
 #include <iostream>
 #include <chrono>
 #include <cstdint>
+#include <cstdio>
+#include <csignal>
+#include <atomic>
 #include "AudioTools.h"
 #include "Config.h"
+#include "../Common/Serialization/AudioStats.h"
 
 // How long we wait for the connection and the server info before giving up.
 const int HandshakeTimeoutSeconds = 30;
+
+// Set by Ctrl+C so the main loop can exit and clean up.
+static std::atomic<bool> g_quit{false};
+
+static void OnSignal(int) {
+    g_quit = true;
+}
 
 int main(int argc, const char *argv[] ) {
 
@@ -63,6 +74,12 @@ int main(int argc, const char *argv[] ) {
             printf("timed out after %d seconds waiting for server info\n", HandshakeTimeoutSeconds);
             return 1;
         }
+        // The server may reject us, e.g. on a protocol version mismatch. The
+        // connection callback already printed the server's reason.
+        if (!clientSocket->IsConnected()) {
+            printf("disconnected while waiting for server info\n");
+            return 1;
+        }
         clientSocket->PollIncomingMessages(&networkBuffer);
         clientSocket->PollConnectionStateChanges();
         std::this_thread::sleep_for(syncInterval);
@@ -76,30 +93,57 @@ int main(int argc, const char *argv[] ) {
         return 1;
     }
 
+    uint32 serverProtocol = clientSocket->GetServerInfo().protocolVersion;
+    if (serverProtocol != PROTOCOL_VERSION) {
+        printf("server protocol %u does not match client protocol %u\n", serverProtocol, PROTOCOL_VERSION);
+        return 1;
+    }
+
     // Match the audio buffer to how often we poll the network, so playback never runs dry.
     // Work in 64 bits so a large sync interval cannot wrap around and pass the check below.
     uint64_t frames = (uint64_t)sampleRate * config.syncIntervalMs / 1000;
 
-    // A buffer bigger than the audio message can hold would drop samples.
-    if (frames < 1 || frames > AudioData::Capacity) {
-        printf("sync interval of %u ms does not work with the server sample rate of %u Hz: "
-               "it needs %llu frames per buffer, but only 1 to %zu are supported\n",
-               config.syncIntervalMs, sampleRate, (unsigned long long)frames, AudioData::Capacity);
+    // The capture side splits large buffers into several audio messages and
+    // the playback buffer scales with the interval, so any interval in the
+    // allowed 1 to 1000 ms range works.
+    if (frames < 1) {
+        printf("sync interval of %u ms is too short for the server sample rate of %u Hz\n",
+               config.syncIntervalMs, sampleRate);
         return 1;
     }
 
     unsigned int bufferFrames = (unsigned int)frames;
 
-    SetChannel message;
-    message.channel = config.channel;
+    // Give playback a few intervals of headroom before audio starts, but
+    // never less than a tenth of a second of samples.
+    size_t playbackCapacity = (size_t)frames * PlaybackSlackIntervals;
+    size_t playbackFloor = sampleRate / PlaybackSlackMinFractionOfSecond;
+    if (playbackCapacity < playbackFloor)
+        playbackCapacity = playbackFloor;
+    networkBuffer.SetCapacity(playbackCapacity);
 
-    clientSocket->Send(&message, sizeof(message));
+    SetClientConfig message;
+    message.channel = config.channel;
+    message.loopback = config.loopback ? 1 : 0;
+    message.muted = 0;
+    snprintf(message.name, sizeof(message.name), "%s", config.name.c_str());
+
+    uint8_t configBuf[SetClientConfig::MaxWireSize];
+    WriteStream configStream(configBuf, sizeof(configBuf));
+    if (!message.Serialize(configStream)) {
+        printf("failed to encode client config\n");
+        return 1;
+    }
+    configStream.Flush();
+    clientSocket->Send(configBuf, configStream.BytesWritten());
 
     if (!audioTools->StartRecording(clientSocket, &networkBuffer, sampleRate, bufferFrames)) {
         return 1;
     }
 
-    while (!quit){
+    std::signal(SIGINT, OnSignal);
+
+    while (!quit && !g_quit){
 
         clientSocket->PollIncomingMessages(&networkBuffer);
         clientSocket->PollConnectionStateChanges();
@@ -108,6 +152,9 @@ int main(int argc, const char *argv[] ) {
 
     }
 
+    audioTools->StopRecording();
+    delete clientSocket;
+    VOICECHAT_AUDIO_STATS_PRINT();
 
     return 0;
 }

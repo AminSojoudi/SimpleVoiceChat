@@ -17,6 +17,8 @@ struct ClientConfig {
     std::string serverAddress = "127.0.0.1";
     uint16_t port = 27020;
     int64_t channel = 0;
+    std::string name; // shown to other clients; empty means the server picks client-<id>
+    bool loopback = false; // hear your own voice echoed back from the server
     ESteamNetworkingSocketsDebugOutputType logLevel = k_ESteamNetworkingSocketsDebugOutputType_Msg;
     unsigned int syncIntervalMs = 5; // how often we poll the network, also sets the audio buffer size
 };
