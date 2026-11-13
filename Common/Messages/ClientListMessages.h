@@ -11,7 +11,7 @@ struct ClientEntry
 {
 	static constexpr uint32 WireSize = 45;
 
-	int64 channel = 0;
+	int64_t channel = 0;
 	uint32 clientId = 0;
 	uint8_t muted = 0;
 	char name[MaxClientNameLength + 1] = {};

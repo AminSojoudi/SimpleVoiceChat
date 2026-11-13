@@ -81,4 +81,7 @@ build/
 VoiceChatServer/Debug
 *.pbxproj
 VoiceChatServer/enc_temp_folder/
-VoiceChatClient/.idea/
+.idea/
+
+# Root CMake build (CMakePresets.json)
+/out/

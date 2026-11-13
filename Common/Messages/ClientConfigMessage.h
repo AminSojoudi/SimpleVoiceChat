@@ -11,7 +11,7 @@ struct SetClientConfig
 
 	uint8_t type = SET_CLIENT_CONFIG;
 	uint32 protocolVersion = PROTOCOL_VERSION;
-	int64 channel = 0;
+	int64_t channel = 0;
 	uint8_t loopback = 0;	// 1 = client wants to hear their own voice back
 	uint8_t muted = 0;		// carried on the wire; nothing sets it until phase 3
 	char name[MaxClientNameLength + 1] = {};

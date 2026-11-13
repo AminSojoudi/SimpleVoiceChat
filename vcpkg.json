@@ -1,0 +1,16 @@
+{
+  "dependencies": [
+    "gamenetworkingsockets",
+    "cxxopts"
+  ],
+  "features": {
+    "server": {
+      "description": "Libraries only the server uses",
+      "dependencies": []
+    },
+    "client": {
+      "description": "Libraries only the client uses",
+      "dependencies": [ "rtaudio" ]
+    }
+  }
+}

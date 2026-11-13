@@ -1,0 +1,38 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "debug",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "release",
+      "inherits": "debug",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo" }
+    },
+    {
+      "name": "vs",
+      "description": "Visual Studio solution with both programs, for Rider and VS (out/build/vs/SimpleVoiceChat.sln)",
+      "inherits": "debug",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": null },
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    },
+    {
+      "name": "xcode",
+      "description": "Xcode project with both programs (out/build/xcode/SimpleVoiceChat.xcodeproj)",
+      "inherits": "debug",
+      "generator": "Xcode",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": null },
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "debug", "configurePreset": "debug" },
+    { "name": "release", "configurePreset": "release" }
+  ]
+}

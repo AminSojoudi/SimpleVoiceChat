@@ -1,0 +1,7 @@
+.git
+**/out
+**/build
+**/cmake-build-*
+**/.idea
+**/.vs
+.serena
