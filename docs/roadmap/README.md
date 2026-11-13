@@ -36,7 +36,7 @@ These don't depend on any phase. Found 2026-11-12.
 
 ## Build notes (every phase)
 
-- Windows, Visual Studio 2022, vcpkg for dependencies (GameNetworkingSockets, RtAudio, cxxopts).
+- Windows, Visual Studio 2026 (18), vcpkg for dependencies (GameNetworkingSockets, RtAudio, cxxopts).
 - Build from the root: `cmake --preset debug` then `cmake --build --preset debug` (output `out/build/debug/`). From a plain shell, import the VS dev environment first, then set `VCPKG_ROOT` back to the standalone vcpkg (vcvars points it at VS's bundled copy):
-  `cmd /c "call \"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat\" && set VCPKG_ROOT=C:\Work\OpenSource\vcpkg && cmake --build --preset debug"`
+  `cmd /c "call \"C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat\" && set VCPKG_ROOT=C:\Work\OpenSource\vcpkg && cmake --build --preset debug"`
 - Dependencies live in the root `vcpkg.json`: shared ones at the top level, program-only ones under the `server` / `client` feature. See CLAUDE.md.

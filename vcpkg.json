@@ -1,4 +1,5 @@
 {
+  "builtin-baseline": "af2c387aa62cf2d0909cd50f4049f2bee1ab682b",
   "dependencies": [
     "gamenetworkingsockets",
     "cxxopts"

@@ -17,18 +17,18 @@ Everything builds from the root `CMakeLists.txt` (IDE, CI, Docker). The folders 
 
 ## Dependencies
 
-One manifest: root `vcpkg.json`.
+One manifest: root `vcpkg.json`. Versions are pinned by `builtin-baseline` (a vcpkg commit), so local, CI, and Docker build the same versions. To update: move the local vcpkg checkout to a newer commit, run `vcpkg x-update-baseline` in the repo root, then rebuild clean. Local builds need a vcpkg checkout at or after the baseline commit.
 - Used by both programs → top-level `dependencies`. Find it once in the root `CMakeLists.txt` (GNS targets are global, so a second `find_package` fails).
 - Used by one program → that program's feature (`server` or `client`). Add `find_package` and `target_link_libraries` in that folder's `CMakeLists.txt`.
 - `VOICECHAT_BUILD_SERVER` / `VOICECHAT_BUILD_CLIENT` (both ON by default) turn on each program and its vcpkg feature. Docker sets `VOICECHAT_BUILD_CLIENT=OFF`, so client libraries never reach the server image.
 
 ## Build (Windows)
 
-`cmake --preset debug` then `cmake --build --preset debug` (output in `out/build/debug/`). Presets: `debug`, `release` (Ninja), `vs` (Windows only), which generates `out/build/vs/SimpleVoiceChat.sln` with both programs, and `xcode` (macOS only), which generates `out/build/xcode/SimpleVoiceChat.xcodeproj`. Rider 2024.1 can't load CMake directly, so it opens that `.sln`. Only the root calls `project()`; a `project()` in a folder makes the VS generator write an extra `.sln`.
+`cmake --preset debug` then `cmake --build --preset debug` (output in `out/build/debug/`). Presets: `debug`, `release` (Ninja), `vs` (Windows only), which generates `out/build/vs/SimpleVoiceChat.slnx` with both programs, and `xcode` (macOS only), which generates `out/build/xcode/SimpleVoiceChat.xcodeproj`. Rider opens that solution file. Only the root calls `project()`; a `project()` in a folder makes the VS generator write an extra solution file.
 
 Link GNS through `${GNS_LIB}` (set in the root). vcpkg builds GNS shared on Windows and static on Linux, so the target name differs.
 
-From a plain shell, import the VS dev environment first or headers go missing. vcvars also overwrites `VCPKG_ROOT` with VS's bundled vcpkg (which fails on a manifest with no baseline), so set it back to `C:\Work\OpenSource\vcpkg` afterwards. Rider and VS handle the environment themselves.
+From a plain shell, import the VS dev environment first or headers go missing. vcvars also overwrites `VCPKG_ROOT` with VS's bundled vcpkg (a different checkout from the one the IDE uses), so set it back to `C:\Work\OpenSource\vcpkg` afterwards. Rider and VS handle the environment themselves.
 
 Server in Docker: `docker build -t voice-chat-server .` then `docker run -p 27020:27020/udp voice-chat-server`.
 

@@ -15,9 +15,9 @@
     },
     {
       "name": "vs",
-      "description": "Visual Studio solution with both programs, for Rider and VS (out/build/vs/SimpleVoiceChat.sln)",
+      "description": "Visual Studio solution with both programs, for Rider and VS (out/build/vs/SimpleVoiceChat.slnx)",
       "inherits": "debug",
-      "generator": "Visual Studio 17 2022",
+      "generator": "Visual Studio 18 2026",
       "architecture": "x64",
       "cacheVariables": { "CMAKE_BUILD_TYPE": null },
       "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
