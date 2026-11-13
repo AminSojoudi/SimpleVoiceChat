@@ -29,7 +29,11 @@ One CMake project at the root that builds both programs, so an IDE opens them to
 
 1. **CI passes on GitHub.** Push the branch and check both workflows. Ubuntu builds the client too, which needs rtaudio's Linux audio deps through vcpkg. Watch for missing system packages (e.g. autoconf, libtool) on the runner.
 2. **Xcode preset** is untested. Check `cmake --preset xcode` on a Mac when one is available.
-3. **Leftover local files** (not tracked by git): `VoiceChatServer/CMakeSettings.json` and `VoiceChatClient/CMakeSettings.json` are VS settings for the old per-folder builds. Delete them.
+3. **GameNetworkingSockets version (checked 2026-11-12).** The local vcpkg (`C:\Work\OpenSource\vcpkg`, May 2026) installs GNS **1.5.0**. Upstream and the current vcpkg port are at **1.6.1**. Docker and CI clone the latest vcpkg, so they already build 1.6.1 while local builds use 1.5.0.
+   - Update local: `git -C C:\Work\OpenSource\vcpkg pull`. No code changes needed: we only use core APIs (connect, listen, poll groups, send/receive, `RunCallbacks`) that haven't changed.
+   - Worth having: 1.5.1 fixes reliable-message bugs (size decoding, segment gap map, the `SendMessageToConnection` size limit). We send everything reliable, so these matter. 1.6.x makes the native ICE client the default (P2P only, not used here).
+   - **Decision for the user: pin versions?** The manifest has no `builtin-baseline`, so each machine gets whatever its vcpkg checkout has. Adding a baseline (`vcpkg x-update-baseline --add-initial-baseline`) makes local, CI, and Docker build the same versions. The catch: updates then happen on purpose, by bumping the baseline.
+4. **Leftover local files** (not tracked by git): `VoiceChatServer/CMakeSettings.json` and `VoiceChatClient/CMakeSettings.json` are VS settings for the old per-folder builds. Delete them.
 
 All of this work was committed on `feature/terminal-client` on 2026-11-12 (including `.serena/` with its project config and memories).
 

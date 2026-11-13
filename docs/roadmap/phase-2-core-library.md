@@ -56,6 +56,7 @@ The current client code cannot be embedded in a TUI or game engine:
 10. **Unreliable audio — design decision for planning, ask the user.** Client and server send everything with `k_nSteamNetworkingSend_ReliableNoNagle` (`SocketClient::Send`, `Server::SendMessage`). For audio this means one lost packet stalls every packet behind it until the resend arrives, so latency grows under loss. Options:
     - **Keep reliable.** No change. Fine on LAN, bad on lossy links.
     - **Unreliable audio, reliable everything else.** Audio sends (client upstream and server relay) use `k_nSteamNetworkingSend_UnreliableNoNagle`; requests and events stay reliable. Unreliable messages can be dropped or arrive out of order, so playback needs a per-sender sequence number to drop late packets and fill gaps with silence. That is a wire change: add the field to `AudioData`, bump `PROTOCOL_VERSION`, and keep the server's fixed byte offsets in the `AUDIO` relay case in sync.
+    - **GNS connection lanes** (since GNS 1.4, `ConfigureConnectionLanes`): split one connection into lanes with their own priority and weight, so audio and control messages don't block each other. Lanes don't remove head-of-line blocking for reliable audio. They do help keep events and config from being stuck behind audio. Look at them alongside the unreliable option.
     - Fits this phase because Core owns the playback buffer, which is where loss handling lives. The server relay change lands in the same commit.
 
 ## Out of scope
