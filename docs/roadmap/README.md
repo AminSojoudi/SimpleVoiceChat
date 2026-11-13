@@ -11,11 +11,19 @@ The work is split into phases. Each phase has its own doc in this folder with en
 | Phase | Doc | Status |
 |---|---|---|
 | 1. Protocol restructure + server presence | [phase-1-protocol-presence.md](phase-1-protocol-presence.md) | done (2026-08-04) |
+| 1.5. Root build, Docker, and CI | [phase-1.5-build-ci.md](phase-1.5-build-ci.md) | in progress (verification open) |
 | 2. Extract VoiceChatCore client library | [phase-2-core-library.md](phase-2-core-library.md) | not started |
 | 3. Terminal UI client | [phase-3-terminal-client.md](phase-3-terminal-client.md) | not started |
 | 4. C API + Unity plugin (future) | [phase-4-c-api-unity.md](phase-4-c-api-unity.md) | not started |
 
 Update the status column when a phase is done, and note anything a later phase needs to know that changed during implementation.
+
+## Small fixes (do before phase 2)
+
+These don't depend on any phase. Found 2026-11-12.
+
+- [x] **CI builds the server.** Done 2026-11-12: both workflows build the root project, which includes the server.
+- [ ] **Wrong invalid-handle constant.** `VoiceChatServer/Server.cpp:88` compares the listen socket to `k_HSteamNetPollGroup_Invalid`. It should be `k_HSteamListenSocket_Invalid`. It works today only because both are 0.
 
 ## Decisions already made (apply to all phases)
 
@@ -29,6 +37,6 @@ Update the status column when a phase is done, and note anything a later phase n
 ## Build notes (every phase)
 
 - Windows, Visual Studio 2022, vcpkg for dependencies (GameNetworkingSockets, RtAudio, cxxopts).
-- Every build shell command must import the VS dev environment first:
-  `cmd /c "call \"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat\" && cmake --build <build-dir>"`
-- Existing build trees: `VoiceChatServer\out\build\x64-Release` and `VoiceChatClient\out\build\x64-Release` (configured via Visual Studio's CMakeSettings workflow).
+- Build from the root: `cmake --preset debug` then `cmake --build --preset debug` (output `out/build/debug/`). From a plain shell, import the VS dev environment first, then set `VCPKG_ROOT` back to the standalone vcpkg (vcvars points it at VS's bundled copy):
+  `cmd /c "call \"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat\" && set VCPKG_ROOT=C:\Work\OpenSource\vcpkg && cmake --build --preset debug"`
+- Dependencies live in the root `vcpkg.json`: shared ones at the top level, program-only ones under the `server` / `client` feature. See CLAUDE.md.

@@ -14,7 +14,7 @@ The current client code cannot be embedded in a TUI or game engine:
 
 - **Everything is static.** All of `SocketClient`'s state is static members (`SocketClient.h`) — a process-global singleton. The GameNetworkingSockets status callback is a raw function pointer with no user-data channel, which is why it ended up static.
 - **It prints from three threads.** Raw `printf`/`std::cout` sites are spread across `SocketClient.cpp` (~13 sites), `AudioTools.cpp`, `Utils.h`, and even `AudioMessage.h::AddInput`. The GNS debug callback prints from a background thread; the RtAudio callback prints from the realtime audio thread. A TUI owns the whole screen — all of this must go through a callback/sink.
-- **No shutdown path.** `main.cpp` has no signal handling; the main loop is infinite, `StopRecording` is never called, connections are never closed, `GameNetworkingSockets_Kill()` never runs.
+- **Partial shutdown path.** Since phase 1, `main.cpp` handles SIGINT, calls `StopRecording`, and the `SocketClient` dtor closes the connection. `GameNetworkingSockets_Kill()` still never runs.
 
 ## Current state inventory (verified 2026-08-04 — key facts for design)
 
@@ -32,9 +32,9 @@ The current client code cannot be embedded in a TUI or game engine:
 
 ### Known defects to fix during extraction (not before)
 - Playback underrun leaves the output buffer untouched (stale garbage instead of silence) — `AudioTools.cpp` `record()`, missing `else` that should zero the output.
-- Disconnect never resets `isConnected`, so the main loop spins printing "connection is invalid" every 5 ms after a drop. Core needs a real disconnected state + event.
-- `SocketClient` dtor closes nothing; add clean shutdown (close connection, stop stream, `GameNetworkingSockets_Kill`).
-- SERVER_INFO handler copies the struct with no size check (unlike AUDIO which validates) — add the check.
+- ~~Disconnect never resets `isConnected`~~ — fixed in phase 1 (close callback sets it false). Core still needs a real disconnected state + event.
+- `SocketClient` dtor closes the connection (phase 1) but never calls `GameNetworkingSockets_Kill`; Core needs the full clean shutdown.
+- ~~SERVER_INFO handler has no size check~~ — fixed in phase 1 (decodes through `ReadStream`).
 - `AUDIO_SAMPLE` is `uint16` but the stream format is signed 16-bit (`RTAUDIO_SINT16`). Bit-exact so it works, but any level/VU math (phase 3 needs "am I talking") must cast to `int16_t`. Consider changing the typedef to `int16` — it's wire-compatible.
 
 ## Scope
@@ -45,10 +45,18 @@ The current client code cannot be embedded in a TUI or game engine:
    - Callbacks fire on the thread that calls `Update()` (main/UI thread), never on the audio or GNS threads. Internal events from other threads get queued.
 3. **Logging sink** replacing every printf across the moved code, including the GNS debug callback (T3) and audio-thread sites (T2) — those must enqueue, not call the sink inline.
 4. **Mute** implemented in the audio callback (skip `AddInput` of mic samples when muted; `std::atomic<bool>`), visible state sent to the server via the phase 1 config message.
+   - **Runtime options (added 2026-11-12).** Mute, loopback, and channel can all change mid-session. The protocol already supports it: the client resends `SetClientConfig`, the server applies it and broadcasts `CLIENT_CONFIG_CHANGED`. No wire change. Core keeps the current options and resends the full config on any change. The phase 3 options panel (see phase-3 doc) is built on this.
+   - **API shape — decision for planning, ask the user.** Options: separate setters (`SetMuted`, `SetLoopback`, `SetChannel`), or one call that takes an options struct (`UpdateOptions(opts)`). Recommendation: the options struct. One code path sends the config, and a new option later is one more field instead of one more method. The phase 4 C API needs a flat setter per field either way.
+   - Changing channel affects local state: the client list view filters by channel, and the playback buffer should be cleared so audio from the old channel doesn't keep playing.
 5. **Talking detection**: local mic energy for "am I talking" (cast samples to `int16_t`), and per-peer "is talking" derived from received audio sender ids (phase 1) with a ~200ms hold-off.
 6. **Clean shutdown path**: stop stream, close connection, kill GNS; make the CLI handle Ctrl-C (SIGINT → quit flag) as proof.
 7. **Rewrite `VoiceChatClient/main.cpp`** as a thin consumer of Core (connect, print log lines, Ctrl-C to quit). Delete the now-moved files from the CLI target.
 8. **Replace `ConcurrentBag` buffer with an SPSC ring buffer** for playback samples (single producer = network thread, single consumer = audio thread).
+9. **Play silence on underrun.** When the ring buffer has fewer samples than the callback needs, zero the output buffer. Today `record()` leaves it untouched and stale audio plays again (still open, verified 2026-11-12).
+10. **Unreliable audio — design decision for planning, ask the user.** Client and server send everything with `k_nSteamNetworkingSend_ReliableNoNagle` (`SocketClient::Send`, `Server::SendMessage`). For audio this means one lost packet stalls every packet behind it until the resend arrives, so latency grows under loss. Options:
+    - **Keep reliable.** No change. Fine on LAN, bad on lossy links.
+    - **Unreliable audio, reliable everything else.** Audio sends (client upstream and server relay) use `k_nSteamNetworkingSend_UnreliableNoNagle`; requests and events stay reliable. Unreliable messages can be dropped or arrive out of order, so playback needs a per-sender sequence number to drop late packets and fill gaps with silence. That is a wire change: add the field to `AudioData`, bump `PROTOCOL_VERSION`, and keep the server's fixed byte offsets in the `AUDIO` relay case in sync.
+    - Fits this phase because Core owns the playback buffer, which is where loss handling lives. The server relay change lands in the same commit.
 
 ## Out of scope
 
@@ -63,6 +71,7 @@ The current client code cannot be embedded in a TUI or game engine:
 - Ctrl-C on the CLI exits cleanly: stream stopped, connection closed (server logs a clean disconnect, not a timeout).
 - Kill the server while a client runs: client gets a disconnected event and exits instead of spinning.
 - Mute toggle demonstrable (even if just a debug key/flag in the CLI): peer stops receiving audio while muted, resumes after.
+- Loopback and channel change mid-session through Core's options API: the server log shows the config change, and other clients get `CLIENT_CONFIG_CHANGED`.
 
 ## Notes for later phases
 
