@@ -8,9 +8,10 @@ Read `docs/technical-design.md` for how the parts fit together, and `docs/roadma
 ## Layout
 
 - `VoiceChatServer/` — server executable. Single-threaded poll loop.
-- `VoiceChatClient/` — CLI client executable. Main thread polls the network; the RtAudio callback thread captures and plays audio.
+- `VoiceChatCore/` — client library (`VoiceChatSession.h`). Owns connection, handshake, client list, audio capture, mixing, and talking. Never prints; reports through one event callback. The caller's thread runs `Update`; the RtAudio callback thread captures and plays audio. One session per process.
+- `VoiceChatClient/` — thin CLI over Core. Prints events and reads `m`/`l`/`c <n>`/`q` from stdin.
 - `Common/Messages/` — wire messages, `MessageType` enum, `PROTOCOL_VERSION`.
-- `Common/Serialization/` — bit stream and `Serialize(Stream&)` helpers. Header-only. Both executables list these headers in their `CMakeLists.txt`.
+- `Common/Serialization/` — bit stream and `Serialize(Stream&)` helpers. Header-only. `VoiceChatServer` and `VoiceChatCore` list these headers in their `CMakeLists.txt`.
 - `docs/roadmap/` — phase docs. One phase per session; update the status table and "Notes for later phases" when a phase ends.
 
 Everything builds from the root `CMakeLists.txt` (IDE, CI, Docker). The folders don't build on their own.
@@ -34,9 +35,9 @@ Server in Docker: `docker build -t voice-chat-server .` then `docker run -p 2702
 
 ## Testing
 
-No automated tests. CI (`.github/workflows/`) builds both programs from the root on Windows and Ubuntu.
+One automated test: `SampleRingTest` (`VoiceChatCore/SampleRingTest.cpp`, plain asserts). CI (`.github/workflows/`) builds both programs from the root on Windows and Ubuntu, then runs it.
 Smoke test by hand: start the server, connect two clients on localhost, watch both logs.
-`-DVOICECHAT_AUDIO_STATS` turns on packet and sample stats in the client send path.
+`-DVOICECHAT_AUDIO_STATS` turns on packet and sample stats in Core's send path; the CLI prints them on exit.
 
 ## Rules
 
@@ -44,6 +45,7 @@ Smoke test by hand: start the server, connect two clients on localhost, watch bo
 - Each message has one `template<typename Stream> bool Serialize(Stream&)` that does write, read, and measure. Never memcpy structs onto the wire.
 - Range-check every count and length on read (`serialize_*_range`). Treat payloads as untrusted.
 - The first wire byte is the `uint8_t` type. Ranges: requests 1–63, events 64–127, data 128+. Values 2 and 3 stay unused.
-- The server's audio relay does not decode. It reads `count` from wire bytes 5–8 and overwrites `senderId` at bytes 1–4 in place. If the audio layout moves, update the `AUDIO` case in `VoiceChatServer/Server.cpp` too.
-- New headers in `Common/` must be added to both `CMakeLists.txt` files.
+- The server's audio relay does not decode. It reads `count` from wire bytes 9–12 and overwrites `senderId` at bytes 1–4 in place. If the audio layout moves, update the `AUDIO` case in `VoiceChatServer/Server.cpp` too.
+- New headers in `Common/` must be added to `VoiceChatServer/CMakeLists.txt` and `VoiceChatCore/CMakeLists.txt`.
+- Core never prints (no `printf`, `cout`, `cerr`). Other threads queue logs; `Update` fires them as LOG events.
 - Little-endian hosts only (compile-time `#error`).

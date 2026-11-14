@@ -12,7 +12,7 @@ The work is split into phases. Each phase has its own doc in this folder with en
 |---|---|---|
 | 1. Protocol restructure + server presence | [phase-1-protocol-presence.md](phase-1-protocol-presence.md) | done (2026-08-04) |
 | 1.5. Root build, Docker, and CI | [phase-1.5-build-ci.md](phase-1.5-build-ci.md) | in progress (verification open) |
-| 2. Extract VoiceChatCore client library | [phase-2-core-library.md](phase-2-core-library.md) | not started |
+| 2. Extract VoiceChatCore client library | [phase-2-core-library.md](phase-2-core-library.md) | done (2026-11-13), listening test open |
 | 3. Terminal UI client | [phase-3-terminal-client.md](phase-3-terminal-client.md) | not started |
 | 4. C API + Unity plugin (future) | [phase-4-c-api-unity.md](phase-4-c-api-unity.md) | not started |
 
@@ -23,7 +23,7 @@ Update the status column when a phase is done, and note anything a later phase n
 These don't depend on any phase. Found 2026-11-12.
 
 - [x] **CI builds the server.** Done 2026-11-12: both workflows build the root project, which includes the server.
-- [ ] **Wrong invalid-handle constant.** `VoiceChatServer/Server.cpp:88` compares the listen socket to `k_HSteamNetPollGroup_Invalid`. It should be `k_HSteamListenSocket_Invalid`. It works today only because both are 0.
+- [x] **Wrong invalid-handle constant.** Done 2026-11-13 (phase 2, chunk 1): `StartServer` compared the listen socket to `k_HSteamNetPollGroup_Invalid` as a second check. Corrected, it duplicated the `k_HSteamListenSocket_Invalid` check above it, so it was deleted.
 
 ## Decisions already made (apply to all phases)
 

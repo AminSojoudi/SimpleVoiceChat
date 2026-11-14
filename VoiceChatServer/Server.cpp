@@ -23,8 +23,7 @@ static uint32 EncodeMessage(Msg& msg, uint8_t* buf, uint32 capacity) {
 
 
 void Server::SendMessage(HSteamNetConnection conn, const void* bytes, uint32 size) {
-    steamNetworking->SendMessageToConnection(conn, bytes, size,
-        k_nSteamNetworkingSend_ReliableNoNagle, nullptr);
+    SendToConnection(steamNetworking, conn, bytes, size);
     Instance->sentBytesCount += size;
 }
 
@@ -82,10 +81,6 @@ bool Server::StartServer(uint16 port, const std::string& bindAddress, ESteamNetw
     socket = steamNetworking->CreateListenSocketIP(addr, 1, &options);
 
     if ( socket == k_HSteamListenSocket_Invalid ) {
-        printf("Failed to listen on port %d", port);
-        return false;
-    }
-    if ( socket == k_HSteamNetPollGroup_Invalid ) {
         printf("Failed to listen on port %d", port);
         return false;
     }
@@ -251,6 +246,13 @@ void Server::OnSteamNetConnectionStatusChanged(SteamNetConnectionStatusChangedCa
                 break;
             }
 
+            if ( !ConfigureLanes( steamNetworking, pInfo->m_hConn ) )
+            {
+                steamNetworking->CloseConnection( pInfo->m_hConn, 0, nullptr, false );
+                printf( "Failed to configure lanes\n" );
+                break;
+            }
+
             // Track the client from now on. Config fields keep their defaults
             // until the client sends SET_CLIENT_CONFIG.
             char endpoint[ SteamNetworkingIPAddr::k_cchMaxString ];
@@ -381,16 +383,17 @@ void Server::PollIncomingMessages() {
                 }
 
                 // Validate without a full decode; this is the hot path.
-                // Wire layout: type u8, senderId u32 at bytes 1-4, count u32 at bytes 5-8, samples.
+                // Wire layout: type u8, senderId u32 at bytes 1-4, sequence u32 at bytes 5-8,
+                // count u32 at bytes 9-12, samples. The sequence passes through untouched.
                 const uint32 size = pIncomingMsg->GetSize();
                 uint8_t* bytes = (uint8_t*)pIncomingMsg->m_pData;
-                if (size < 9) {
+                if (size < 13) {
                     printf("\r dropped audio message that is too short: %u bytes\n", size);
                     break;
                 }
                 uint32 count;
-                memcpy(&count, bytes + 5, 4);
-                if (count > AudioData::Capacity || 9 + 2 * count != size) {
+                memcpy(&count, bytes + 9, 4);
+                if (count > AudioData::Capacity || 13 + 2 * count != size) {
                     printf("\r dropped audio message claiming %u samples in %u bytes\n", count, size);
                     break;
                 }
@@ -429,8 +432,14 @@ void Server::PollIncomingMessages() {
                     break;
                 }
 
+                auto client = clients.find(pIncomingMsg->m_conn);
+                if (client == clients.end()) {
+                    break;
+                }
+
                 ServerInfo serverInfo;
                 serverInfo.sampleRate = sampleRate;
+                serverInfo.clientId = client->second.clientId;
                 uint8_t buf[ServerInfo::MaxWireSize];
                 uint32 size = EncodeMessage(serverInfo, buf, sizeof(buf));
                 if (size > 0) {

@@ -29,3 +29,6 @@ jobs:
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Test SampleRing
+      run: ${{github.workspace}}/build/VoiceChatCore/${{env.BUILD_TYPE}}/SampleRingTest.exe

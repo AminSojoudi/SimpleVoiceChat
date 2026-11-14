@@ -54,7 +54,7 @@ The terminal client (phase 3) needs features the protocol cannot express today:
 Final state after implementation (2026-08-04):
 
 - **Serialization, not POD casting.** Every message serializes field by field through `Common/Serialization/` (`BitStream.h`, `Streams.h`, `Serialize.h`). Wire format is explicit little-endian; big-endian hosts fail the build. In-memory structs are plain (no packing pragmas, no wire-sizeof asserts) — the serializer alone defines the wire layout.
-- `PROTOCOL_VERSION = 1` (`Common/Messages/MessageTypes.h`). Bump on ANY wire change, including field encodings. Strict equality; the server rejects mismatches through the connection close reason string, which the client callback prints.
+- `PROTOCOL_VERSION = 1` (`Common/Messages/MessageTypes.h`). Version 2 (phase 2, chunk 1) added `AudioData.sequence` and `ServerInfo.clientId`. Bump on ANY wire change, including field encodings. Strict equality; the server rejects mismatches through the connection close reason string, which the client callback prints.
 - `MaxClientNameLength = 31`; names are 32 bytes fixed on the wire, termination always forced on read. Empty name → server substitutes `client-<id>`.
 - **Message type values** (one byte, first on the wire; range = category — requests 1–63, events 64–127, data 128+; values 2 and 3 stay reserved so pre-versioning clients never alias a current message):
   - `SET_CLIENT_CONFIG = 1`, `GET_SERVER_INFO = 4`
@@ -66,8 +66,8 @@ Final state after implementation (2026-08-04):
   |---|---|---|
   | `SetClientConfig` | type u8, protocolVersion u32, channel i64, loopback u8, muted u8, name 32B | 47 |
   | `ServerInfoRequest` | type u8, protocolVersion u32 | 5 |
-  | `ServerInfo` | type u8, sampleRate u32, protocolVersion u32 | 9 |
-  | `AudioData` | type u8, senderId u32, count u32 (range ≤ 1024), samples 16 bits each | 9 + 2·count |
+  | `ServerInfo` | type u8, sampleRate u32, protocolVersion u32, clientId u32 (v2) | 13 |
+  | `AudioData` | type u8, senderId u32, sequence u32 (v2), count u32 (range ≤ 1024), samples 16 bits each | 13 + 2·count |
   | `ClientEntry` (nested) | channel i64, clientId u32, muted u8, name 32B | 45 |
   | `ClientList` | type u8, clientCount u32 (range ≤ 64), entries | 5 + 45·count |
   | `ClientJoined` / `ClientConfigChanged` | type u8, ClientEntry | 46 |

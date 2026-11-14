@@ -74,7 +74,36 @@ The current client code cannot be embedded in a TUI or game engine:
 - Mute toggle demonstrable (even if just a debug key/flag in the CLI): peer stops receiving audio while muted, resumes after.
 - Loopback and channel change mid-session through Core's options API: the server log shows the config change, and other clients get `CLIENT_CONFIG_CHANGED`.
 
+## What was done
+
+Done 2026-11-13 in three chunks, following [phase-2-implementation-plan.md](phase-2-implementation-plan.md). The CLI is now a ~100-line consumer of Core. Headless smoke test passed (handshake, client list, mute, loopback, channel change, clean close, server kill). Nobody has listened to the audio yet (mixing, two voices at once, no old-channel audio after a channel change); that check is still open.
+
+Deviations from the plan:
+- The old client set `RTAUDIO_HOG_DEVICE | RTAUDIO_SCHEDULE_REALTIME` but never passed the options to `openStream`. Core drops the flags instead of turning them on.
+- A channel change frees the playback slots but keeps the sender map, so each sender's talking state still ends through the normal hold timer.
+- `Disconnect` closes the connection with linger. That is enough for the server to log a clean close; no extra wait before `GameNetworkingSockets_Kill`.
+- `LogLevel` values are `Error`, `Warning`, `Info`, `Debug`. `windows.h` defines `ERROR` as a macro.
+- Core's `Connect` rejects a name longer than 31 characters with a LOG event. The CLI no longer checks it, so it doesn't need the `Common/` headers.
+- The CLI `--log-level` takes `error|warning|info|debug`. `none`, `verbose`, and `everything` are gone.
+- Review fixes (2026-11-14):
+  - Silence gate on the sender. The audio callback sends only while the mic peak is above `TalkingLevel` or was within the 200 ms hold (counted in audio buffers, sized at `StartAudio`). A quiet room sends nothing, so peers no longer show as talking all session. `sequence` counts sends only, so a pause leaves no gap and receivers didn't change. My own talking state comes from the same gate. No wire change.
+  - Audio from an id that isn't in the peer list is dropped. Late audio after `CLIENT_LEFT` no longer brings a peer back.
+  - `CLIENT_LIST`, `CLIENT_JOINED`, and `CLIENT_CONFIG_CHANGED` build peers with the talking state the session already has.
+  - A freed playback slot is marked reusable only after the audio thread has emptied its ring.
+
 ## Notes for later phases
 
-- After this phase, record the final Core public API (header path + class surface) here for phase 3 planning:
-  - (fill in when done)
+- Header: `VoiceChatCore/VoiceChatSession.h`. Link the `VoiceChatCore` target. It needs no GNS, RtAudio, or `Common/` headers.
+- Public surface:
+  - `VoiceChatSession(std::function<void(const Event&)> onEvent)`, destructor disconnects and kills GNS.
+  - `bool Connect(const VoiceChatConfig&)`, `void Disconnect()` (no event), `void Update()`, `void UpdateOptions(const VoiceChatOptions&)`.
+  - `State()`, `Options()`, `Peers()` (all channels, includes me), `SelfId()` (0 until connected), `MicLevel()` (0..1).
+  - `VoiceChatConfig`: `address`, `port`, `name`, `syncIntervalMs`, `logLevel`, `options`. `VoiceChatOptions`: `channel`, `muted`, `loopback`.
+  - `EventType`: `CONNECTED`, `DISCONNECTED` (text = reason), `PEER_LIST`, `PEER_JOINED`, `PEER_LEFT`, `PEER_CHANGED`, `TALKING_CHANGED` (peer id == `SelfId()` means my mic), `LOG`.
+- Call `Update` every `syncIntervalMs`. It drives playback, talking timers, and the 30 s handshake timeout.
+- One session per process. The constructor asserts if a second one exists (GNS callbacks carry no user pointer).
+- Events fire inside `Update`, on the caller's thread. A failed `Connect` also fires LOG before it returns. Don't call `Connect` or `Disconnect` from the event callback.
+- `Peer` has no `loopback` field, so a loopback change shows up as `PEER_CHANGED` with nothing visibly different.
+- Senders stop sending in silence (mic below `TalkingLevel` for 200 ms). `TalkingLevel` in `VoiceChatSession.cpp` is the one calibration knob: too low and a noisy mic sends all the time, too high and quiet speech gets cut. Speech onset is not buffered, so the first buffer above the level is the first one sent.
+- Fixed: audio that arrives before the client list used to fire `TALKING_CHANGED` with an empty name. Audio from unknown ids is now dropped, and the list carries the current talking state.
+- Left as is (cosmetic): audio rides lane 0 and config events lane 1, so a peer's talking event can arrive before the `PEER_CHANGED` that unmuted them.

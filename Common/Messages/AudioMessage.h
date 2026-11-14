@@ -7,16 +7,14 @@
 
 #include "MessageTypes.h"
 #include "../Serialization/Serialize.h"
-#include "stdio.h"
-
 
 typedef uint16 AUDIO_SAMPLE;
 
-// Wire: type u8, senderId u32, sampleCount u32 (range <= Capacity), samples 16 bits each.
-// 9 bytes + 2 per sample.
+// Wire: type u8, senderId u32, sequence u32, sampleCount u32 (range <= Capacity),
+// samples 16 bits each. 13 bytes + 2 per sample.
 struct AudioData{
     static constexpr size_t Capacity = 1024;
-    static constexpr uint32 MaxWireSize = 9 + 2 * Capacity;
+    static constexpr uint32 MaxWireSize = 13 + 2 * Capacity;
 
     uint8_t type = AUDIO;
 
@@ -24,6 +22,10 @@ struct AudioData{
     // relaying. The serializer fixes this field at wire bytes 1-4 (little
     // endian) — the server patches those bytes in place on the hot path.
     uint32 senderId = 0;
+
+    // Counts sent packets per connection from 0. The client sets it; the server
+    // leaves it alone. Receivers use it to drop late or duplicate packets.
+    uint32 sequence = 0;
 
     uint32 sampleCount = 0;
     AUDIO_SAMPLE Input[Capacity];
@@ -33,6 +35,7 @@ struct AudioData{
     {
         if (!serialize_uint8(stream, type)) return false;
         if (!serialize_uint32(stream, senderId)) return false;
+        if (!serialize_uint32(stream, sequence)) return false;
         if (!serialize_sample_array(stream, Input, sampleCount, Capacity)) return false;
         return true;
     }
@@ -40,8 +43,6 @@ struct AudioData{
     void AddInput(AUDIO_SAMPLE sample){
         if (sampleCount < Capacity)
             Input[sampleCount++] = sample;
-        else
-            printf("buffer is full \r\n");
     }
 
     void ResetData(){

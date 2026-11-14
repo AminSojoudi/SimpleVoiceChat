@@ -1,13 +1,5 @@
-find_package(rtaudio CONFIG REQUIRED)
 find_package(cxxopts CONFIG REQUIRED)
 
-add_executable(VoiceChatClient main.cpp
-        SocketClient.cpp
-        SocketClient.h
-        AudioTools.cpp
-        AudioTools.h
-        Config.cpp
-        Config.h
-        "../Common/Messages/AudioMessage.h" "../Common/Messages/ClientConfigMessage.h" "../Common/Messages/MessageTypes.h" "../Common/Messages/ServerInfoMessage.h" "../Common/Messages/ServerInfoRequestMessage.h" "../Common/Messages/ClientListMessages.h" "../Common/Serialization/BitStream.h" "../Common/Serialization/Streams.h" "../Common/Serialization/Serialize.h" "../Common/Serialization/AudioStats.h" "Utils.h")
+add_executable(VoiceChatClient main.cpp Config.cpp Config.h "../Common/Serialization/AudioStats.h")
 
-target_link_libraries(VoiceChatClient ${GNS_LIB} RtAudio::rtaudio cxxopts::cxxopts)
+target_link_libraries(VoiceChatClient VoiceChatCore cxxopts::cxxopts)
