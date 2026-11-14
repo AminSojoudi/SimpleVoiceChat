@@ -1,0 +1,17 @@
+{
+  "builtin-baseline": "af2c387aa62cf2d0909cd50f4049f2bee1ab682b",
+  "dependencies": [
+    "gamenetworkingsockets",
+    "cxxopts"
+  ],
+  "features": {
+    "server": {
+      "description": "Libraries only the server uses",
+      "dependencies": []
+    },
+    "client": {
+      "description": "Libraries only the client uses",
+      "dependencies": [ "rtaudio" ]
+    }
+  }
+}

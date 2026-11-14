@@ -1,113 +1,100 @@
-#include <iostream>
+#include <atomic>
 #include <chrono>
-#include <cstdint>
-#include "AudioTools.h"
+#include <csignal>
+#include <cstdio>
+#include <deque>
+#include <iostream>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <thread>
 #include "Config.h"
+#include "../Common/Serialization/AudioStats.h"
 
-// How long we wait for the connection and the server info before giving up.
-const int HandshakeTimeoutSeconds = 30;
+// Set by Ctrl+C so the main loop can exit and clean up.
+static std::atomic<bool> g_quit{false};
 
-int main(int argc, const char *argv[] ) {
+static void OnSignal(int) {
+    g_quit = true;
+}
 
-    ClientConfig config;
+// Lines typed on stdin. The input thread adds them, the main loop takes them.
+static std::mutex g_inputMutex;
+static std::deque<std::string> g_input;
+
+static void ReadInput() {
+    std::string line;
+    while (std::getline(std::cin, line)) {
+        std::lock_guard<std::mutex> lock(g_inputMutex);
+        g_input.push_back(line);
+    }
+}
+
+static std::string Describe(const Peer& peer) {
+    return std::to_string(peer.id) + " " + peer.name + " (channel " + std::to_string(peer.channel) +
+           (peer.muted ? ", muted)" : ")");
+}
+
+int main(int argc, const char *argv[]) {
+    VoiceChatConfig config;
     if (auto exitCode = ConfigParser::Parse(argc, argv, config)) {
         return *exitCode;
     }
 
-    in_addr buf;
-    SteamNetworkingIPAddr serverAddress;
-    NetworkBuffer networkBuffer;
+    bool dropped = false;
+    std::unique_ptr<VoiceChatSession> session;  // a pointer, so the callback below can use it
+    session = std::make_unique<VoiceChatSession>([&](const Event& event) {
+        switch (event.type) {
+        case EventType::CONNECTED: printf("connected as %u\n", session->SelfId()); break;
+        case EventType::DISCONNECTED: printf("disconnected: %s\n", event.text.c_str()); dropped = true; break;
+        case EventType::PEER_LIST: {
+            std::string list;
+            for (const Peer& peer : session->Peers()) list += " " + Describe(peer);
+            printf("peers:%s\n", list.c_str());
+            break;
+        }
+        case EventType::PEER_JOINED: printf("joined %s\n", Describe(event.peer).c_str()); break;
+        case EventType::PEER_LEFT: printf("left %s\n", Describe(event.peer).c_str()); break;
+        case EventType::PEER_CHANGED: printf("changed %s\n", Describe(event.peer).c_str()); break;
+        case EventType::TALKING_CHANGED:
+            printf("%s %s talking\n", Describe(event.peer).c_str(), event.peer.talking ? "started" : "stopped");
+            break;
+        case EventType::LOG: printf("%s\n", event.text.c_str()); break;
+        }
+        fflush(stdout);  // stdout may be a pipe or a file
+    });
 
-    if (!inet_pton(AF_INET, config.serverAddress.c_str(), &buf)) {
-        printf("failed to set address\n");
+    if (!session->Connect(config)) {
         return 1;
     }
-    serverAddress.SetIPv4(htonl(buf.s_addr), config.port);
-
-    char serverAddressString[INET_ADDRSTRLEN];
-    buf.s_addr = htonl(serverAddress.GetIPv4());
-
-    inet_ntop(AF_INET, &buf, serverAddressString , INET_ADDRSTRLEN);
-
-    printf("trying to connect to server %s on %d \n", serverAddressString , serverAddress.m_port);
-
-    auto* audioTools = new AudioTools();
+    std::signal(SIGINT, OnSignal);
+    std::thread(ReadInput).detach();
 
     bool quit = false;
-
-    // create network socket
-    auto clientSocket = new SocketClient(config.logLevel);
-
-    if (!clientSocket->Connect(serverAddress)) {
-        return 1;
-    }
-
-    auto syncInterval = std::chrono::milliseconds(config.syncIntervalMs);
-    auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(HandshakeTimeoutSeconds);
-
-    // Wait for the connection to come up.
-    while (!clientSocket->IsConnected()) {
-        if (std::chrono::steady_clock::now() > deadline) {
-            printf("timed out after %d seconds waiting to connect to the server\n", HandshakeTimeoutSeconds);
-            return 1;
+    while (!quit && !g_quit && session->State() != SessionState::DISCONNECTED) {
+        std::deque<std::string> lines;
+        {
+            std::lock_guard<std::mutex> lock(g_inputMutex);
+            lines.swap(g_input);
         }
-        clientSocket->PollConnectionStateChanges();
-        std::this_thread::sleep_for(syncInterval);
-    }
-
-    // Ask the server for its settings. We need the sample rate before we can open the audio stream.
-    clientSocket->RequestServerInfo();
-
-    while (!clientSocket->HasServerInfo()) {
-        if (std::chrono::steady_clock::now() > deadline) {
-            printf("timed out after %d seconds waiting for server info\n", HandshakeTimeoutSeconds);
-            return 1;
+        VoiceChatOptions options = session->Options();
+        long long channel;
+        for (const std::string& line : lines) {
+            if (line == "m") options.muted = !options.muted;
+            else if (line == "l") options.loopback = !options.loopback;
+            else if (sscanf(line.c_str(), "c %lld", &channel) == 1) options.channel = channel;
+            else if (line == "q") quit = true;
         }
-        clientSocket->PollIncomingMessages(&networkBuffer);
-        clientSocket->PollConnectionStateChanges();
-        std::this_thread::sleep_for(syncInterval);
+        // Skip the resend when only q or unknown lines came in.
+        const VoiceChatOptions& old = session->Options();
+        if (options.muted != old.muted || options.loopback != old.loopback || options.channel != old.channel)
+            session->UpdateOptions(options);
+
+        session->Update();
+        std::this_thread::sleep_for(std::chrono::milliseconds(config.syncIntervalMs));
     }
 
-    // Don't trust the rate the server sent us blindly, we do maths with it below.
-    unsigned int sampleRate = clientSocket->GetServerInfo().sampleRate;
-    if (sampleRate < MinSampleRate || sampleRate > MaxSampleRate) {
-        printf("server reported a sample rate of %u Hz, which is outside the supported range of %u to %u Hz\n",
-               sampleRate, MinSampleRate, MaxSampleRate);
-        return 1;
-    }
-
-    // Match the audio buffer to how often we poll the network, so playback never runs dry.
-    // Work in 64 bits so a large sync interval cannot wrap around and pass the check below.
-    uint64_t frames = (uint64_t)sampleRate * config.syncIntervalMs / 1000;
-
-    // A buffer bigger than the audio message can hold would drop samples.
-    if (frames < 1 || frames > AudioData::Capacity) {
-        printf("sync interval of %u ms does not work with the server sample rate of %u Hz: "
-               "it needs %llu frames per buffer, but only 1 to %zu are supported\n",
-               config.syncIntervalMs, sampleRate, (unsigned long long)frames, AudioData::Capacity);
-        return 1;
-    }
-
-    unsigned int bufferFrames = (unsigned int)frames;
-
-    SetChannel message;
-    message.channel = config.channel;
-
-    clientSocket->Send(&message, sizeof(message));
-
-    if (!audioTools->StartRecording(clientSocket, &networkBuffer, sampleRate, bufferFrames)) {
-        return 1;
-    }
-
-    while (!quit){
-
-        clientSocket->PollIncomingMessages(&networkBuffer);
-        clientSocket->PollConnectionStateChanges();
-
-        std::this_thread::sleep_for(syncInterval);
-
-    }
-
-
-    return 0;
+    session->Disconnect();
+    VOICECHAT_AUDIO_STATS_PRINT();
+    return dropped ? 1 : 0;
 }

@@ -21,30 +21,21 @@ RUN /opt/vcpkg/bootstrap-vcpkg.sh
 ENV VCPKG_ROOT=/opt/vcpkg
 ENV PATH="${VCPKG_ROOT}:${PATH}"
 
-# Install dependencies
-RUN vcpkg install gamenetworkingsockets:x64-linux
-
 # Copy source code
 COPY . .
 
-# Build the project
-WORKDIR /app/VoiceChatServer
-RUN cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake
-RUN cmake --build build --config Release
+# Build only the server. vcpkg installs the shared and server deps from vcpkg.json.
+RUN cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DVOICECHAT_BUILD_CLIENT=OFF \
+    -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake
+RUN cmake --build build
 
 # Runtime stage
 FROM ubuntu:22.04 AS runtime
 
 WORKDIR /app
 
-# Copy the built binary and required libraries
-COPY --from=build /app/VoiceChatServer/build/VoiceChatServer /app/
-COPY --from=build /opt/vcpkg/installed/x64-linux/lib/libGameNetworkingSockets.so /usr/lib/
-
-# Install runtime dependencies
-RUN apt-get update && apt-get install -y \
-    libssl3 \
-    && rm -rf /var/lib/apt/lists/*
+# vcpkg links everything statically on Linux, so the binary is all we need.
+COPY --from=build /app/build/VoiceChatServer/VoiceChatServer /app/
 
 # Expose the port the server will listen on
 EXPOSE 27020
