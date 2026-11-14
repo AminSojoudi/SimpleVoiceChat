@@ -1,4 +1,4 @@
-find_package(rtaudio CONFIG REQUIRED)
+find_package(RtAudio CONFIG REQUIRED)
 
 add_library(VoiceChatCore STATIC VoiceChatSession.cpp
         VoiceChatSession.h

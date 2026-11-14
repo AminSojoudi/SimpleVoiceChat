@@ -284,7 +284,7 @@ if(VOICECHAT_BUILD_CLIENT)
 endif()
 ```
 
-**`VoiceChatCore/CMakeLists.txt`**: `find_package(rtaudio CONFIG REQUIRED)`; `add_library(VoiceChatCore STATIC ...)` listing its own files plus every `Common/` header it uses; `target_include_directories(... PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})`; link `${GNS_LIB}` and `RtAudio::rtaudio` (PRIVATE if the public header stays free of GNS types). `add_executable(SampleRingTest SampleRingTest.cpp)`.
+**`VoiceChatCore/CMakeLists.txt`**: `find_package(RtAudio CONFIG REQUIRED)`; `add_library(VoiceChatCore STATIC ...)` listing its own files plus every `Common/` header it uses; `target_include_directories(... PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})`; link `${GNS_LIB}` and `RtAudio::rtaudio` (PRIVATE if the public header stays free of GNS types). `add_executable(SampleRingTest SampleRingTest.cpp)`.
 
 **`VoiceChatClient/CMakeLists.txt`** (chunk 3): `main.cpp Config.cpp Config.h` (+ `AudioStats.h` if still used), link `VoiceChatCore cxxopts::cxxopts`.
 
